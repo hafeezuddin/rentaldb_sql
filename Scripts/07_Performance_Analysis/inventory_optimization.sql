@@ -52,10 +52,11 @@ Priority list of films to acquire/remove
     GROUP BY 1,2
     ORDER BY 1 ASC
  ),
- rentals_per_copy AS (
+ --CTE to retrieve Monthly film rental patterns
+rentals_per_copy AS (
     SELECT f.film_id, f.title,
     EXTRACT('Month' FROM r.rental_date) AS month,
-    COUNT(*)
+    COUNT(*) AS rentals
     FROM film f
     INNER JOIN inventory i ON f.film_id = i.film_id
     INNER JOIN rental r ON i.inventory_id = r.inventory_id
@@ -63,3 +64,21 @@ Priority list of films to acquire/remove
     GROUP BY 1,2,3
     ORDER BY 1
  )
+--CTE to identify Peak Demand Periods
+peak_period AS (
+   SELECT *,
+    SUM(sq1.rentals) OVER (PARTITION BY sq1.film_id) AS total_rentals,
+    ROUND((sq1.rentals/SUM(sq1.rentals) OVER (PARTITION BY sq1.film_id))*100,2) AS concentration
+    FROM (
+    SELECT f.film_id, f.title,
+    EXTRACT('Month' FROM r.rental_date) AS month,
+    COUNT(*) AS rentals
+    FROM film f
+    INNER JOIN inventory i ON f.film_id = i.film_id
+    INNER JOIN rental r ON i.inventory_id = r.inventory_id
+    WHERE r.return_date IS NOT NULL AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
+    GROUP BY 1,2,3
+    ORDER BY 1
+    ) sq1
+)
+
