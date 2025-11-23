@@ -81,4 +81,33 @@ peak_period AS (
     ORDER BY 1
     ) sq1
 )
-
+--CTE for Rental Duration Analysis.
+rental_duration_analysis AS (
+   SELECT sq2.film_id, 
+   ROUND(AVG(sq2.rental_duration),2) AS average_rental_duration
+   FROM (
+    SELECT f.film_id, 
+        i.inventory_id, 
+        r.rental_id, 
+        r.rental_date::date, r.return_date::date,
+        (r.return_date::date - r.rental_date::date) AS rental_duration
+    FROM film f
+    INNER JOIN inventory i ON f.film_id = i.film_id
+    INNER JOIN rental r ON i.inventory_id = r.inventory_id
+    WHERE r.return_date IS NOT NULL AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
+    ORDER BY f.film_id ASC
+   ) sq2
+  GROUP BY sq2.film_id 
+)
+--CTE for Copy utilization
+copy_utilization AS (
+    SELECT f.film_id, f.title, i.inventory_id,
+    EXTRACT('Month' FROM r.rental_date) AS month,
+    COUNT(*) AS rentals
+    FROM film f
+    INNER JOIN inventory i ON f.film_id = i.film_id
+    INNER JOIN rental r ON i.inventory_id = r.inventory_id
+    WHERE r.return_date IS NOT NULL AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
+    GROUP BY 1,2,3,4
+    ORDER BY 1,3,4 ASC
+)
