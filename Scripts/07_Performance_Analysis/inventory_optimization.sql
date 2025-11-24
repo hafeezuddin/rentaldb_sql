@@ -101,6 +101,7 @@ rental_duration_analysis AS (
 )
 --CTE for Copy utilization
 copy_utilization AS (
+    EXPLAIN ANALYZE
     SELECT f.film_id, f.title, i.inventory_id,
     EXTRACT('Month' FROM r.rental_date) AS month,
     COUNT(*) AS rentals
