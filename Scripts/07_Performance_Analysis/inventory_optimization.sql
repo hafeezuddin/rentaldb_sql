@@ -52,15 +52,15 @@ Tier Classification Framework
     Revenue per copy > 50th percentile
     Current copies < 3 (undersupplied)
     Action: Increase copy count by 1-2 copies
+    
     Tier 4: "Cost Centers" - Expensive but Rarely Rented
-
     Criteria:
     Replacement cost > 75th percentile
     Cost recovery multiple < 1.5
     Average monthly rentals per copy < 1
     Action: Phase out, reduce to 1 copy
+    
     Tier 5: "Underperformers" - Low Cost, Low Usage
-
     Criteria:
     Revenue per copy < 25th percentile
     Cost recovery multiple < 1.0
@@ -183,10 +183,10 @@ CASE
         AND avg_monthly_rentals_per_copy < 1.5
     THEN 'Sleepers - Keep but dont expand'
 
-    WHEN sq6.p_rank > 0.60
-        AND sq6.cost_recovery_multiple > 2
-        AND avg_monthly_rentals_per_copy < 1.5
-    THEN 'Sleepers - Keep but dont expand'
+    WHEN sq6.concentration > 30
+        AND sq6.p_rank > 0.50
+        AND sq6.no_of_copies_avilable < 3
+    THEN 'Oppurtunities -Increase by 1-2 copies'
 
     ELSE
         'TBA'
@@ -196,10 +196,11 @@ FROM
     SELECT fd.film_id, fd.title, fd.no_of_copies_avilable,fd.revenue_per_copy, 
     fd.cost_recovery_multiple, pd.month AS peak_month,
     rda.average_rental_duration,
-    cu.avg_monthly_rentals_per_copy,
+    cu.avg_monthly_rentals_per_copy, pd.concentration,
     PERCENT_RANK() OVER (ORDER BY fd.revenue_per_copy) AS p_rank
     FROM film_data fd
     INNER JOIN peak_period pd ON fd.film_id = pd.film_id
     INNER JOIN rental_duration_analysis rda ON fd.film_id = rda.film_id
     INNER JOIN copy_utilization cu ON fd.film_id = cu.film_id
 ) sq6;
+
