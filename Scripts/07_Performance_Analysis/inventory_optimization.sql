@@ -38,15 +38,15 @@ Tier Classification Framework
     Cost recovery multiple > 3.0
     Average monthly rentals per copy > 2
     Action: Maintain current copies, monitor for wear
+    
     Tier 2: "Sleepers" - Low Utilization but Profitable
-
     Criteria:
     Revenue per copy > 60th percentile
     Cost recovery multiple > 2.0
     Average monthly rentals per copy < 1.5
     Action: Keep but don't expand, potential for promotion
+    
     Tier 3: "Opportunities" - High Demand, Need More Copies
-
     Criteria:
     Peak month concentration > 30% (high seasonal demand)
     Revenue per copy > 50th percentile
@@ -171,11 +171,35 @@ copy_utilization AS (
    ) sq5
    GROUP BY 1 
 )
-SELECT fd.film_id, fd.title, fd.no_of_copies_avilable,fd.revenue_per_copy, 
-fd.cost_recovery_multiple, pd.month AS peak_month,
-rda.average_rental_duration,
-cu.avg_monthly_rentals_per_copy
-FROM film_data fd
-INNER JOIN peak_period pd ON fd.film_id = pd.film_id
-INNER JOIN rental_duration_analysis rda ON fd.film_id = rda.film_id
-INNER JOIN copy_utilization cu ON fd.film_id = cu.film_id;
+SELECT *,
+CASE
+    WHEN sq6.p_rank > 0.75 
+        AND sq6.cost_recovery_multiple > 3
+        AND avg_monthly_rentals_per_copy > 2
+    THEN 'Work Horses - Maintain Copies'
+
+    WHEN sq6.p_rank > 0.60
+        AND sq6.cost_recovery_multiple > 2
+        AND avg_monthly_rentals_per_copy < 1.5
+    THEN 'Sleepers - Keep but dont expand'
+
+    WHEN sq6.p_rank > 0.60
+        AND sq6.cost_recovery_multiple > 2
+        AND avg_monthly_rentals_per_copy < 1.5
+    THEN 'Sleepers - Keep but dont expand'
+
+    ELSE
+        'TBA'
+    END AS category    
+FROM
+    (
+    SELECT fd.film_id, fd.title, fd.no_of_copies_avilable,fd.revenue_per_copy, 
+    fd.cost_recovery_multiple, pd.month AS peak_month,
+    rda.average_rental_duration,
+    cu.avg_monthly_rentals_per_copy,
+    PERCENT_RANK() OVER (ORDER BY fd.revenue_per_copy) AS p_rank
+    FROM film_data fd
+    INNER JOIN peak_period pd ON fd.film_id = pd.film_id
+    INNER JOIN rental_duration_analysis rda ON fd.film_id = rda.film_id
+    INNER JOIN copy_utilization cu ON fd.film_id = cu.film_id
+) sq6;
