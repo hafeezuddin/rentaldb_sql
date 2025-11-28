@@ -41,23 +41,64 @@ Expected ROI for retention campaigns */
 
 --CTE to calculate metric #1
 customer_value_scoring AS (
-    SELECT c.customer_id, 
-        MAX(r.rental_date::date) AS latest_rental_date,
-        --Assuming current_Date to be 12-31-2005 (Cut off date)
-        --CURRENT_DATE - MAX(r.rental_date::date) AS days_since_last_rental to be used if the data us current.
-        '01-01-2006' - MAX(r.rental_date::date) AS days_since_last_rental,
-        NTILE(4) OVER (ORDER BY '01-01-2006' - MAX(r.rental_date::date) DESC) AS recency_quartile,
-        COUNT(DISTINCT r.rental_id) AS life_time_rentals,
-        NTILE(4) OVER (ORDER BY COUNT(DISTINCT r.rental_id)) AS total_rentals_quartile,
-        SUM(p.amount) AS total_spent,
-        NTILE(4) OVER (ORDER BY SUM(p.amount)) AS spent_quartile,
-        COUNT(DISTINCT r.rental_id)/COUNT (DISTINCT EXTRACT(MONTH FROM r.rental_date)) AS average_active_month_rentals
-    FROM customer c
-    INNER JOIN rental r ON c.customer_id = r.customer_id
-    INNER JOIN payment p ON r.rental_id = p.rental_id
-    WHERE r.return_date IS NOT NULL and (r.rental_date BETWEEN '01-01-2005' AND '12-31-2005')
-    GROUP BY 1
-) 
+   SELECT *,
+    CASE
+        WHEN sq1.recency_quartile = 4
+        AND sq1.total_rentals_quartile = 4
+        AND sq1.spent_quartile = 4 THEN 'Champions'
+        WHEN sq1.recency_quartile = 1 THEN 'At Risk'
+        WHEN sq1.recency_quartile >= 3
+        AND sq1.total_rentals_quartile >= 3
+        AND sq1.spent_quartile <= 2 THEN 'Loyal - Low Spend'
+        WHEN sq1.spent_quartile = 4
+        AND sq1.recency_quartile <= 2 THEN 'Big Spenders - Less Active'
+        ELSE 'Occasional Renters'
+    END AS categorization,
+    CASE
+        WHEN sq1.recency_quartile = 4
+        AND sq1.total_rentals_quartile = 4
+        AND sq1.spent_quartile = 4 THEN 'Premium loyalty tier, exclusive offers'
+        WHEN sq1.recency_quartile = 1 THEN 'Win-back campaigns, "We miss you" offers'
+        WHEN sq1.recency_quartile >= 3
+        AND sq1.total_rentals_quartile >= 3
+        AND sq1.spent_quartile <= 2 THEN 'Upsell campaigns, bundle offers'
+        WHEN sq1.spent_quartile = 4
+        AND sq1.recency_quartile <= 2 THEN 'Reactivation offers, premium content access'
+        ELSE 'Standard loyalty program, discovery offers'
+    END AS program
+    FROM (
+        SELECT c.customer_id,
+            MAX(r.rental_date::date) AS latest_rental_date,
+            --Assuming current_Date to be 12-31-2005 (Cut off date)
+            --CURRENT_DATE - MAX(r.rental_date::date) AS days_since_last_rental to be used if the data us current.
+            '01-01-2006' - MAX(r.rental_date::date) AS days_since_last_rental,
+            NTILE(4) OVER (
+                ORDER BY '01-01-2006' - MAX(r.rental_date::date) DESC
+            ) AS recency_quartile,
+            COUNT(DISTINCT r.rental_id) AS life_time_rentals,
+            NTILE(4) OVER (
+                ORDER BY COUNT(DISTINCT r.rental_id)
+            ) AS total_rentals_quartile,
+            SUM(p.amount) AS total_spent,
+            NTILE(4) OVER (
+                ORDER BY SUM(p.amount)
+            ) AS spent_quartile,
+            COUNT(DISTINCT r.rental_id) / COUNT (
+                DISTINCT EXTRACT(
+                    MONTH
+                    FROM r.rental_date
+                )
+            ) AS average_active_month_rentals
+        FROM customer c
+            INNER JOIN rental r ON c.customer_id = r.customer_id
+            INNER JOIN payment p ON r.rental_id = p.rental_id
+        WHERE r.return_date IS NOT NULL
+            and (
+                r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
+            )
+        GROUP BY 1
+    ) sq1
+)
 
 EXTRACT()
 DATE_TRUNC()
