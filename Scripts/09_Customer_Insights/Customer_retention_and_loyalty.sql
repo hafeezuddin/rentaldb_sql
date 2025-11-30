@@ -38,6 +38,7 @@
  Personalized film recommendations for each segment
  Loyalty program structure with tier-specific benefits
  Expected ROI for retention campaigns */
+
 --CTE to calculate metric #1
 WITH customer_value_scoring AS (
     SELECT *,
@@ -71,6 +72,7 @@ WITH customer_value_scoring AS (
                 MAX(r.rental_date::date) AS latest_rental_date,
                 --Assuming current_Date to be 12-31-2005 (Cut off date)
                 --CURRENT_DATE - MAX(r.rental_date::date) AS days_since_last_rental to be used if the data us current.
+                --Analysis is being done on historical data till 2005 end on 01-01-2006.
                 '01-01-2006' - MAX(r.rental_date::date) AS days_since_last_rental,
                 
                 NTILE(4) OVER (
@@ -78,15 +80,16 @@ WITH customer_value_scoring AS (
                 ) AS recency_quartile,
 
                 COUNT(DISTINCT r.rental_id) AS life_time_rentals,
-
                 NTILE(4) OVER (
                     ORDER BY COUNT(DISTINCT r.rental_id)
                 ) AS total_rentals_quartile,
-                SUM(p.amount) AS total_spent,
+                
 
+                SUM(p.amount) AS total_spent,
                 NTILE(4) OVER (
                     ORDER BY SUM(p.amount)
                 ) AS spent_quartile,
+
 
                 COUNT(DISTINCT r.rental_id) / COUNT (
                     DISTINCT EXTRACT(
@@ -118,10 +121,38 @@ second_half_Rentals AS (
     INNER JOIN rental r ON c.customer_id = r.customer_id
     WHERE r.return_date IS NOT NULL AND (r.rental_date BETWEEN '07-01-2005' AND '12-31-2005')
     GROUP BY 1
+),
+
+
+---Metric #2 Calculation:
+ /** Metric 2: Churn Risk Assessment:
+ Months since last rental
+ Rental frequency decline rate
+ Payment pattern changes **/
+Churn_Risk_Assessment AS (
+    SELECT cvs.customer_id,
+        cvs.days_since_last_rental/30 AS months_since_last_rental,
+        
+        CASE
+            WHEN cvs.recency_quartile >=1 THEN 1 ELSE 0
+        END as recency_flag,
+
+        CASE
+            WHEN cvs.spent_quartile = 1 THEN 1 ELSE 0
+        END as spent_flag,
+
+        CASE
+            WHEN cvs.total_rentals_quartile = 1 THEN 1 ELSE 0
+        END AS total_rentals_flag    
+
+    FROM customer_value_scoring cvs
 )
+
+--Main integreated query to get all the metrics together
 SELECT cvs.customer_id,
     cvs.latest_rental_date,
     cvs.days_since_last_rental,
+    cra.months_since_last_rental,
     cvs.life_time_rentals,
     cvs.total_spent,
     cvs.average_active_month_rentals,
@@ -129,7 +160,22 @@ SELECT cvs.customer_id,
     cvs.program,
     fhr.count AS first_half_rentals,
     shr.count AS second_half_rentals,
-    ROUND(((shr.count - fhr.count)::numeric/cvs.life_time_rentals)*100,2) AS rental_change_percentage
+    ROUND(((shr.count - fhr.count)::numeric/cvs.life_time_rentals)*100,2) AS rental_change_percentage,
+    cra.recency_flag,
+    cra.spent_flag,
+    cra.total_rentals_flag,
+    (cra.recency_flag + cra.spent_flag + cra.total_rentals_flag) AS risk_score,
+    CASE
+        WHEN (cra.recency_flag + cra.spent_flag + cra.total_rentals_flag) >=2
+            THEN 'High risk'
+        WHEN (cra.recency_flag + cra.spent_flag + cra.total_rentals_flag) =1
+            THEN 'Medium risk'
+        WHEN (cra.recency_flag + cra.spent_flag + cra.total_rentals_flag) = 0
+            THEN 'Low Risk'
+        ELSE
+            'TBA'
+    END AS risk_cat                    
 FROM customer_value_scoring cvs
 INNER JOIN First_half_Rentals fhr ON cvs.customer_id = fhr.customer_id
-INNER JOIN second_half_Rentals shr ON cvs.customer_id = shr.customer_id;
+INNER JOIN second_half_Rentals shr ON cvs.customer_id = shr.customer_id
+INNER JOIN Churn_Risk_Assessment cra ON cvs.customer_id = cra.customer_id;
