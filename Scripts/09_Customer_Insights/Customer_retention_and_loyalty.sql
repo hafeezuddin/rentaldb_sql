@@ -29,6 +29,7 @@
  
  Metric 3: Content Preference Analysis:
  Favorite categories per customer segment
+ 
  Actor popularity across value tiers
  Seasonal rental patterns
  
@@ -146,9 +147,9 @@ Churn_Risk_Assessment AS (
         END AS total_rentals_flag    
 
     FROM customer_value_scoring cvs
-)
+),
 
---Main integreated query to get all the metrics together
+pre_aggregator AS (
 SELECT cvs.customer_id,
     cvs.latest_rental_date,
     cvs.days_since_last_rental,
@@ -178,4 +179,49 @@ SELECT cvs.customer_id,
 FROM customer_value_scoring cvs
 INNER JOIN First_half_Rentals fhr ON cvs.customer_id = fhr.customer_id
 INNER JOIN second_half_Rentals shr ON cvs.customer_id = shr.customer_id
-INNER JOIN Churn_Risk_Assessment cra ON cvs.customer_id = cra.customer_id;
+INNER JOIN Churn_Risk_Assessment cra ON cvs.customer_id = cra.customer_id
+),
+favs_cat AS (
+  SELECT sq2.categorization, sq2.name, sq2.cat_rentals, sq2.top_cat
+  FROM
+    (
+    SELECT sq1.categorization, sq1.name, COUNT(*) AS cat_rentals,
+    ROW_NUMBER() OVER (PARTITION BY sq1.categorization ORDER BY COUNT(*) DESC) AS top_cat
+        FROM
+            (
+            SELECT pa.customer_id, pa.categorization,cat.name
+            FROM
+            pre_aggregator pa
+            INNER JOIN rental r ON pa.customer_id = r.customer_id
+            INNER JOIN inventory i ON r.inventory_id = i.inventory_id
+            INNER JOIN film_category fc ON i.film_id = fc.film_id
+            INNER JOIN category cat ON fc.category_id = cat.category_id
+            )sq1
+        GROUP BY 1,2
+    )sq2
+    WHERE sq2.top_cat =1    
+),
+fav_actors_by_segment AS 
+(
+      SELECT sq4.categorization, sq4.actor_name, sq4.actor_occurence, sq4.top_act
+      FROM
+            (  
+            SELECT sq3.categorization, sq3.actor_name, COUNT(*) AS actor_occurence,
+            ROW_NUMBER() OVER (PARTITION BY sq3.categorization ORDER BY COUNT(*) DESC) AS top_act
+            FROM(
+                SELECT pa.customer_id, pa.categorization, CONCAT(a.first_name,' ', a.last_name) AS actor_name
+                    FROM pre_aggregator pa
+                INNER JOIN rental r ON pa.customer_id = r.customer_id
+                INNER JOIN inventory i ON r.inventory_id = i.inventory_id
+                INNER JOIN film_actor fa ON i.film_id = fa.film_id
+                INNER JOIN actor a ON fa.actor_id = a.actor_id
+                ) sq3
+                GROUP BY 1,2
+            )sq4
+       WHERE sq4.top_act =1     
+),
+monthly_category_preferences_by_segment AS
+(
+
+)
+SELECT * FROM monthly_category_preferences_by_segment; 
