@@ -9,7 +9,7 @@ WITH mon_rev AS (
 SELECT DATE_TRUNC('Month', r.rental_date) AS datemonth, --Truncates Date upto monthlevel for aggregation task
 SUM(p.amount) AS total_revenue                          -- Calculate total revenue generated and aggregated with date
 FROM rental r
-INNER JOIN payment p ON r.rental_id = p.rental_id
+INNER JOIN payment p ON r.rental_id = p.rental_id --NOT USING LEFT (Exluding rentals that do not have payment id)
 GROUP BY 1
 ORDER BY datemonth
 ),
@@ -34,4 +34,4 @@ END AS percentage_change
 FROM mon_rev m
 INNER JOIN cumm_rev cr ON m.datemonth = cr.datemonth2
 ORDER BY percentage_change DESC
-LIMIT 3;
+LIMIT 4;
