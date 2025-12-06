@@ -29,8 +29,8 @@
  
  Metric 3: Content Preference Analysis:
  Favorite categories per customer segment
- 
  Actor popularity across value tiers
+ 
  Seasonal rental patterns
  
  Required Deliverables:
@@ -222,6 +222,7 @@ fav_actors_by_segment AS
 ),
 monthly_category_preferences_by_segment AS
 (
-
+   SELECT pa.customer_id, pa.categorization
+   FROM pre_aggregator pa
 )
 SELECT * FROM monthly_category_preferences_by_segment; 
