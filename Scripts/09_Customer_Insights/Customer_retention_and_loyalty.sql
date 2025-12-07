@@ -220,9 +220,26 @@ fav_actors_by_segment AS
             )sq4
        WHERE sq4.top_act =1     
 ),
+
 monthly_category_preferences_by_segment AS
 (
-   SELECT pa.customer_id, pa.categorization
-   FROM pre_aggregator pa
+   SELECT sq6.month_year, sq6.name, sq6.categorization, sq6.ranked_category
+   FROM
+   ( 
+    SELECT sq5.month_year, sq5.name, sq5.categorization, COUNT(*),
+    ROW_NUMBER() OVER (PARTITION BY month_year, categorization ORDER BY COUNT(*) DESC) AS ranked_category
+    FROM
+    (    
+        SELECT pa.customer_id, pa.categorization, 
+        TO_CHAR(DATE_TRUNC('Month', r.rental_date),'YYYY-MM') AS month_year, cat.name
+        FROM pre_aggregator pa
+        INNER JOIN rental r ON pa.customer_id = r.customer_id
+        INNER JOIN inventory i ON r.inventory_id = i.inventory_id
+        INNER JOIN film_category fc ON i.film_id = fc.film_id
+        INNER JOIN category cat ON fc.category_id = cat.category_id
+    )sq5
+    GROUP BY sq5.categorization,sq5.month_year, sq5.name
+   )sq6 
+   WHERE sq6.ranked_category = 1    
 )
 SELECT * FROM monthly_category_preferences_by_segment; 
