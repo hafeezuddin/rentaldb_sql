@@ -1,0 +1,21 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": false,
+                    "requestCert": true
+                }
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "pg-1f8a1db2-analysisproject24.j.aivencloud.com",
+            "port": 15783,
+            "driver": "PostgreSQL",
+            "name": "aiven_postgres_instance",
+            "database": "defaultdb",
+            "username": "avnadmin",
+            "password": "AVNS_U8IhF8XsrpV-0zfAa7U"
+        }
+    ]
+}
