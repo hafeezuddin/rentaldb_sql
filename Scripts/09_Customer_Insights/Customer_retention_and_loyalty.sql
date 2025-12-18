@@ -17,8 +17,7 @@
  Store Locations: store, address tables for geographic patterns
  
  Analytical Framework:
- Metric 1: Customer Value Scoring:
- Recency, Frequency, Customer Lifetime Value calculation, 
+ Metric 1: Customer Value Scoring: Recency, Frequency, Customer Lifetime Value calculation, 
  Monetary (RFM) analysis - Based on total_money_spent, total_rentals, days_since_last_rental
  Rental frequency trends over time
  
@@ -43,12 +42,15 @@
  --Only paid rentals are considered for monetary calculations
 
 
---Metric 1: Recency
- SELECT r.customer_id, MAX(r.rental_date) AS last_rental_date, COUNT(r.rental_id) AS total_rentals,
+--Metric 1: Recency, customer lifetime value, total rentals
+SELECT r.customer_id, 
+    MAX(r.rental_date) AS last_rental_date, 
+    COUNT(r.rental_id) AS total_rentals,
     EXTRACT(DAY FROM '2006-01-01' - MAX(r.rental_date)) AS days_since_last_rental,
-    ROUND(EXTRACT(DAY FROM '2006-01-01' - MAX(r.rental_date))/30,2) AS months_since_last_rental
-    FROM rental r
-    INNER JOIN payment p ON r.rental_id = p.rental_id
- WHERE p.payment_id IS NOT NULL AND (r.rental_date BETWEEN '2005-01-01' AND '2005-12-31') AND (r.return_date IS NOT NULL)
- GROUP BY r.customer_id
- ORDER BY 1;
+    ROUND(EXTRACT(DAY FROM '2006-01-01' - MAX(r.rental_date))/30,2) AS months_since_last_rental,
+    SUM(p.amount) AS customer_lifetime_value
+FROM rental r
+INNER JOIN payment p ON r.rental_id = p.rental_id
+WHERE p.payment_id IS NOT NULL AND (r.rental_date BETWEEN '2005-01-01' AND '2005-12-31') AND (r.return_date IS NOT NULL)
+GROUP BY r.customer_id
+ORDER BY 1;
