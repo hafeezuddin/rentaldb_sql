@@ -15,7 +15,8 @@
 -- ===== 001_distinct_categories.sql =====
 /* 001 - Distinct categories */
 SELECT DISTINCT c.name AS available_categories
-FROM category c;
+FROM category c
+ORDER BY c.name;
 
 -- ===== 002_film_language_distribution.sql =====
 /* 002 - Film language distribution */
@@ -23,13 +24,14 @@ SELECT
   f.title AS film_name,
   l.name AS language
 FROM film f
-  JOIN language l ON f.language_id = l.language_id;
+  JOIN language l ON f.language_id = l.language_id
+  ORDER BY f.title ASC;
 
 -- ===== 003_films_per_language.sql =====
 /* 003 - Number of films in each language */
 SELECT 
   l.name AS film_language,
-  COUNT(*) AS no_of_films
+  COUNT(f.film_id) AS no_of_films
 FROM language l
   INNER JOIN film f ON l.language_id = f.language_id
 GROUP BY 1
@@ -48,7 +50,7 @@ ORDER BY film_count DESC;
 /* 005 - Number of films in each category */
 SELECT 
   c.name AS category_name,
-  COUNT(*) AS film_count
+  COUNT(f.film_id) AS film_count
 FROM category c
   JOIN film_category fc ON c.category_id = fc.category_id
   JOIN film f ON fc.film_id = f.film_id
@@ -59,11 +61,12 @@ ORDER BY film_count DESC;
 /* 006 - Categories with less than 5 films */
 SELECT 
   c.name AS category_name,
-  COUNT(*) AS no_of_films
+  COUNT(f.film_id) AS no_of_films
 FROM category c
   INNER JOIN film_category fc ON c.category_id = fc.category_id
+  JOIN film f ON fc.film_id = f.film_id
 GROUP BY c.name
-HAVING COUNT(*) < 5;
+HAVING COUNT(f.film_id) < 5;
 
 -- ===== 007_films_rented_by_category.sql =====
 /* 007 - Films rented out in each category */
@@ -73,7 +76,7 @@ SELECT c.category_id,
 FROM category c
   JOIN film_category fc ON c.category_id = fc.category_id
   JOIN inventory i ON fc.film_id = i.film_id
-  JOIN rental r ON i.inventory_id = r.inventory_id
+  JOIN rental r ON i.inventory_id = r.inventory_id --Includes paid and unpaid rentals
 GROUP BY c.category_id,
   c.name
 ORDER BY rental_count DESC;

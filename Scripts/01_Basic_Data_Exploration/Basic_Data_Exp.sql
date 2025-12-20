@@ -26,7 +26,7 @@ WHERE table_name = 'address'
 
 -- ===== 002_customer_sample =====
 /* 002 - Customer sample */
-SELECT *
+SELECT c.customer_id, c.first_name, c.last_name, c.email
 FROM customer c
 ORDER BY c.customer_id
 LIMIT 5;
@@ -35,20 +35,20 @@ LIMIT 5;
 /* 003 - Total distinct customers, films, rentals (subquery + CTE versions) */
 -- Subquery version
 SELECT 
-  (SELECT COUNT(DISTINCT customer_id) FROM customer) AS total_customers,
-  (SELECT COUNT(DISTINCT film_id) FROM film) AS total_films,
-  (SELECT COUNT(DISTINCT rental_id) FROM rental) AS total_rentals;
+  (SELECT COUNT(DISTINCT c.customer_id) FROM customer c) AS total_customers,
+  (SELECT COUNT(DISTINCT f.film_id) FROM film f) AS total_films,
+  (SELECT COUNT(DISTINCT r.rental_id) FROM rental r) AS total_rentals; --Includes paid and unpaid rentals
 
--- CTE + CROSS JOIN version
+-- CTE + CROSS JOIN version` 
 WITH 
   total_customers AS (
-    SELECT COUNT(DISTINCT customer_id) AS total_customers FROM customer
+    SELECT COUNT(DISTINCT c.customer_id) AS total_customers FROM customer c
   ),
   total_films AS (
     SELECT COUNT(DISTINCT f.film_id) AS total_films FROM film f
   ),
   total_rentals AS (
-    SELECT COUNT(DISTINCT r.rental_id) AS total_rentals FROM rental r
+    SELECT COUNT(DISTINCT r.rental_id) AS total_rentals FROM rental r --Includes paid and unpaid rentals
   )
 SELECT * FROM total_customers CROSS JOIN total_films CROSS JOIN total_rentals;
 
@@ -57,7 +57,8 @@ SELECT * FROM total_customers CROSS JOIN total_films CROSS JOIN total_rentals;
 SELECT CONCAT(c.first_name, ' ', c.last_name) AS full_name,
     c.email
 FROM customer c
-ORDER BY c.first_name;
+ORDER BY c.first_name
+LIMIT 100;
 
 
 -- ===== 005_customer_full_names =====
@@ -67,13 +68,12 @@ SELECT c.customer_id,
     CONCAT(c.first_name,' ', c.last_name) AS full_name,
     ci.city,
     DATE_TRUNC('DAY', MAX(r.rental_date))::date AS latest_rental_date,
-    COUNT(DISTINCT r.rental_id) AS total_rentals
+    COUNT(DISTINCT r.rental_id) AS total_rentals --Includes paid and unpaid rentals
 FROM customer c
     INNER JOIN rental r ON c.customer_id = r.customer_id
     INNER JOIN address a ON c.address_id = a.address_id
     INNER JOIN city ci on a.city_id = ci.city_id
-GROUP BY 1,
-    2,3
+GROUP BY 1,2,3
 ORDER BY total_rentals DESC
 LIMIT 10;
 
