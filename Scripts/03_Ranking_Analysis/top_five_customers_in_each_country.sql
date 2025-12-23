@@ -20,10 +20,12 @@ WITH customer_ranks AS (
     INNER JOIN city ci ON a.city_id = ci.city_id
     INNER JOIN country co ON ci.country_id = co.country_id
     INNER JOIN rental r ON c.customer_id = r.customer_id
-    INNER JOIN payment p ON r.rental_id = p.rental_id
+    INNER JOIN payment p ON r.rental_id = p.rental_id --Considering paid rentals
+    --Considering only 2005 rentals
+    WHERE r.return_date IS NOT NULL AND r.rental_date >= '2005-01-01' AND r.rental_date <= '2005-12-31'
   GROUP BY 1,2,3,4,5
 ),
--- CTE to calculate total rental revenue for each country
+-- CTE to calculate total rental revenue for each country for percentage share calculation
 country_totals AS (
   SELECT 
     co2.country, 
@@ -51,6 +53,10 @@ FROM customer_ranks cr
   INNER JOIN country_totals ct ON cr.country_id = ct.country_id
 WHERE cr.rank_within_country <= 5;
 
+
+
+
+
 --Method/Solution 2: 
 -- =============================================
 -- Top 5 Customers in Each Country by Total Rental Amount
@@ -67,7 +73,7 @@ WITH customer_data AS (
     SUM(p.amount) AS total_spent, -- Total amount spent by the customer
     -- Total amount spent in the country
     --(No order by - SUM for country is calculated and is added as column with same value in all rows for that country)
-    SUM(SUM(p.amount)) OVER (PARTITION BY co.country) AS country_sum, 
+    SUM(SUM(p.amount)) OVER (PARTITION BY co.country) AS country_sum,  --May not work in all databases.
     RANK() OVER (PARTITION BY co.country ORDER BY SUM(p.amount) DESC) AS rank, -- Customer's rank within the country by total spent
     ROUND((SUM(p.amount) / SUM(SUM(p.amount)) OVER (PARTITION BY co.country)) * 100, 2) AS share -- Percentage share of country revenue
   FROM payment p
@@ -76,6 +82,8 @@ WITH customer_data AS (
     INNER JOIN address a ON c.address_id = a.address_id
     INNER JOIN city ci ON a.city_id = ci.city_id
     INNER JOIN country co ON ci.country_id = co.country_id
+    --Considering only 2005 rentals
+    WHERE r.return_date IS NOT NULL AND r.rental_date >= '2005-01-01' AND r.rental_date <= '2005-12-31'
   GROUP BY c.customer_id, ci.city, co.country
 )
 -- Main query: Filter top 5 customers per country and show their spend, rank, and share

@@ -4,7 +4,7 @@ Have acted in films from at least 7 different categories.
 Have an average rental rate (across all their films) above the overall average rental rate of all films in the database.
 Output columns: actor_id, first_name, last_name, num_categories (distinct film categories), avg_rental_rate*/
 
---CTE to filter actors who have acted in atleast 7 different categories
+--CTE to filter actors who have acted in at-least 7 different categories
 WITH actor_filter AS (
     SELECT 
         a.actor_id,

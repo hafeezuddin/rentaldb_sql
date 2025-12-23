@@ -17,7 +17,7 @@ ORDER BY datemonth
 cumm_rev AS (
   SELECT m.datemonth AS datemonth2,
   LAG(total_revenue) OVER (ORDER BY m.datemonth) AS pmr,        --LAG() window function for calculating percentage change in revenue
-  SUM(total_revenue) OVER (ORDER BY m.datemonth) AS cummu_rev   --Cummulative revenue month-over-month
+  SUM(total_revenue) OVER (ORDER BY m.datemonth) AS cummu_rev   --Cummulative revenue month-over-month w/o partitioning clause
   FROM mon_rev m
 )
 SELECT

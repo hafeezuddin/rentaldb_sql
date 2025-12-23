@@ -14,7 +14,7 @@ SELECT
 
   -- Total revenue collected today (payments linked to rentals that started today)
   (SELECT COALESCE(SUM(p.amount), 0) FROM payment p
-    INNER JOIN rental r ON p.rental_id = r.rental_id
+    INNER JOIN rental r ON p.rental_id = r.rental_id --connect payments to paid rentals
     WHERE DATE(r.rental_date) = CURRENT_DATE) AS todays_revenue,
   
   -- Number of distinct films that were rented today
@@ -41,6 +41,9 @@ SELECT
       INNER JOIN inventory i ON r.inventory_id = i.inventory_id
       INNER JOIN film f ON i.film_id = f.film_id
       WHERE (r.return_date::date - r.rental_date::date) > f.rental_duration
-        AND DATE_TRUNC('month', r.return_date::date) = DATE_TRUNC('month', CURRENT_DATE)
+        AND r.return_date IS NOT NULL
+        AND DATE_TRUNC('year', r.return_date::date) = DATE_TRUNC('year', CURRENT_DATE) --Filtering to currect year
+        AND DATE_TRUNC('month', r.return_date::date) = DATE_TRUNC('month', CURRENT_DATE) --Filtering to current months
     ) sq2
   ) AS late_returns_current_month;
+-- End of Query
