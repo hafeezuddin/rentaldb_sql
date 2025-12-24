@@ -56,19 +56,22 @@ WITH engagement_metric AS (
                 THEN 'Low'
         END AS engagement_tier
     FROM (
-    SELECT c.customer_id, c.store_id, 
-    MIN(r.rental_date) AS first_rental_date,
-    MAX(r.rental_date) AS last_rental_date,
-    (MAX(r.rental_date) - MIN(r.rental_date)) AS tenure_days
-    FROM customer c
-    INNER JOIN rental r ON c.customer_id = r.customer_id
-    WHERE r.rental_date IS NOT NULL AND r.return_date IS NOT NULL
-    GROUP BY 1,2) sq1
+        SELECT c.customer_id, c.store_id,
+        MIN(r.rental_date) AS first_rental_date,
+        MAX(r.rental_date) AS last_rental_date,
+        (MAX(r.rental_date) - MIN(r.rental_date)) AS tenure_days --Activity period
+        FROM customer c
+        INNER JOIN rental r ON c.customer_id = r.customer_id
+        INNER JOIN payment p ON r.rental_id = p.rental_id   --Considering only paid rentals
+        WHERE r.return_date IS NOT NULL
+            AND (r.rental_date >= '2005-01-01' AND r.rental_date <= '2005-12-31')
+        GROUP BY 1,2) sq1
 ),
 store_performance AS (
     SELECT sq2.store_id, 
         sq2.total_customers,
         sq2.total_spent,
+        SUM(sq2.total_customers) OVER () AS total_customers_across_all_stores,
         ROUND((sq2.total_spent/sq2.total_customers),2) AS avg_spending_per_customer
     FROM (
         SELECT c.store_id, 
@@ -76,7 +79,9 @@ store_performance AS (
             SUM(p.amount) AS total_spent
         FROM customer c
         INNER JOIN rental r ON c.customer_id  = r.customer_id
-        INNER JOIN payment p ON r.rental_id = p.rental_id
+        INNER JOIN payment p ON r.rental_id = p.rental_id --Considering only paid rentals
+        WHERE r.return_date IS NOT NULL
+            AND (r.rental_date >= '2005-01-01' AND r.rental_date <= '2005-12-31')
         GROUP BY 1
         ORDER BY 1
         ) sq2
@@ -89,12 +94,13 @@ SELECT
         sp.total_customers,
         sp.total_spent,
         sp.avg_spending_per_customer,
+        sp.total_customers_across_all_stores,
         COUNT(*) AS tier_customers
     FROM engagement_metric em
     INNER JOIN store_performance sp ON em.store_id = sp.store_id
-    GROUP BY 1,2,3,4,5
+    GROUP BY 1,2,3,4,5,6
 )
 --Main query with an additional metric of distribution
 SELECT *, 
-    ROUND(a.tier_customers::numeric/a.total_customers,2)*100 AS share 
+    ROUND(a.tier_customers::numeric/a.total_customers_across_all_stores,2)*100 AS share
 FROM aggregation a;

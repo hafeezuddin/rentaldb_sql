@@ -18,7 +18,8 @@ Expected Output Columns:
     customer_segment, customer_count, avg_total_spent, avg_rental_count, top_category, late_return_rate, avg_days_between_rentals, 
     segment_revenue_share, active_customer_percentage */
 
--- CTE to compute total spend and spend percentile per customer
+-- CTE to compute total spend and spend percentile per customer.
+--Considering only paid rentals for all the metrics calculations.
 WITH customer_spend_analysis AS (
   SELECT
     c.customer_id,
@@ -28,6 +29,7 @@ WITH customer_spend_analysis AS (
   FROM customer c
   INNER JOIN rental r ON c.customer_id = r.customer_id
   INNER JOIN payment p ON r.rental_id = p.rental_id
+  WHERE r.return_date IS NOT NULL
   GROUP BY 1
   ORDER BY total_spend_by_each_customer DESC
 ),
@@ -51,6 +53,8 @@ rental_analysis AS (
     PERCENT_RANK() OVER (ORDER BY COUNT(r.rental_id) DESC) AS rental_rank
   FROM customer_spend_analysis csa
   INNER JOIN rental r ON csa.customer_id = r.customer_id
+  INNER JOIN payment p ON r.rental_id = p.rental_id
+  WHERE r.return_date IS NOT NULL
   GROUP BY 1
   ORDER BY total_rentals DESC
 ),
@@ -69,10 +73,12 @@ category_analysis AS (
     ROW_NUMBER() OVER (PARTITION BY csa.customer_id ORDER BY COUNT(*) DESC , cat.name ASC) AS category_rank
   FROM customer_spend_analysis csa
   INNER JOIN rental r ON csa.customer_id = r.customer_id
+  INNER JOIN payment p ON r.rental_id = p.rental_id
   INNER JOIN inventory i ON r.inventory_id = i.inventory_id
   INNER JOIN film f ON i.film_id = f.film_id
   INNER JOIN film_category fc ON f.film_id = fc.film_id
   INNER JOIN category cat ON fc.category_id = cat.category_id
+  WHERE r.return_date IS NOT NULL
   GROUP BY 1,2
   ORDER BY csa.customer_id
 ),
@@ -93,6 +99,7 @@ late_returns_percentage AS (
     ROUND((COUNT(*)::numeric / ra.total_rentals::numeric) * 100, 2) AS late_return_percentage
   FROM customer_spend_analysis csa
   INNER JOIN rental r ON csa.customer_id = r.customer_id
+  INNER JOIN payment p ON r.rental_id = p.rental_id
   INNER JOIN inventory i ON r.inventory_id = i.inventory_id
   INNER JOIN film f ON i.film_id = f.film_id
   INNER JOIN rental_analysis ra ON csa.customer_id = ra.customer_id
@@ -110,6 +117,7 @@ active_customers2 AS (
       END AS status
     FROM customer_spend_analysis csa
     INNER JOIN rental r ON csa.customer_id = r.customer_id
+    INNER JOIN payment p ON r.rental_id = p.rental_id
     GROUP BY 1
 ),
 -- CTE to compute days between consecutive rentals per customer (engagement)
@@ -125,6 +133,7 @@ customer_engagement AS (
     END AS days_between_rentals
   FROM customer_spend_analysis csa
   INNER JOIN rental r ON csa.customer_id = r.customer_id
+  INNER JOIN payment p ON r.rental_id = p.rental_id
   ORDER BY csa.customer_id, r.rental_date
 ),
 -- CTE to compute average days between rentals per customer

@@ -21,6 +21,15 @@
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_ten_cities_spendwise.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_three_rev_generating_months.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_two_cities_in_country_rentals.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Customer Engagement &amp; Store Performance Analysis.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Customer_rental_behavior_analysis.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Customer_segmentation_targeted_marketing.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Inventory_optimization.SQL" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/avg_revenue_per_customer.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customer_segmentation.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customers_above_avg_spend.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customers_renting_premium_films.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/premium_films_by_rate.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/cdb8df56-8a69-4b32-a297-bbf3bfab4986/console.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
   </component>
 </project>

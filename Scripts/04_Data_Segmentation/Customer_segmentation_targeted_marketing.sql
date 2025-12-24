@@ -109,7 +109,8 @@ WITH recency_score AS (
         EXTRACT('Month' FROM MAX(r.rental_date)) AS latest_rental_month
         FROM customer c
         INNER JOIN rental r ON c.customer_id = r.customer_id
-        WHERE r.return_date IS NOT NULL AND (r.rental_date BETWEEN '01-01-2005' AND '12-31-2005')
+        INNER JOIN payment p ON r.rental_id = p.rental_id
+        WHERE r.return_date IS NOT NULL AND (r.rental_date BETWEEN '2005-01-01' AND '2005-12-31')
         GROUP BY 1
         ) sq1
 ),
@@ -135,6 +136,7 @@ frequency_score AS (
         COUNT(DISTINCT r1.rental_id) AS total_rentals
         FROM customer c1
         INNER JOIN rental r1 ON c1.customer_id = r1.customer_id
+        INNER JOIN payment p1 ON r1.rental_id = p1.rental_id
         WHERE r1.return_date IS NOT NULL AND (r1.rental_date BETWEEN '01-01-2005' AND '12-31-2005')
         GROUP BY 1
         )sq2
@@ -160,6 +162,7 @@ monetary_score AS (
         PERCENT_RANK() OVER (ORDER BY SUM(p.amount)) AS spent_rank
         FROM customer c2
         INNER JOIN rental r2 ON c2.customer_id = r2.customer_id
+        INNER JOIN payment p2 ON r2.rental_id = p2.rental_id
         INNER JOIN payment p ON r2.rental_id = p.rental_id
         WHERE r2.return_date IS NOT NULL AND (r2.rental_date BETWEEN '01-01-2005' AND '12-31-2005')
         GROUP BY 1
@@ -200,6 +203,7 @@ category_loyalty AS (
                     ROW_NUMBER() OVER (PARTITION BY c3.customer_id ORDER BY COUNT(*) DESC) AS rn
                     FROM customer c3
                     INNER JOIN rental r3 ON c3.customer_id = r3.customer_id
+                    INNER JOIN payment p3 ON r3.rental_id = p3.rental_id
                     INNER JOIN inventory i ON r3.inventory_id = i.inventory_id
                     INNER JOIN film f ON i.film_id = f.film_id
                     INNER JOIN film_category fc ON f.film_id = fc.film_id
@@ -230,17 +234,18 @@ seasonal_pattern AS (
     END AS pattern_score
   FROM (
     SELECT
-        customer_id,
+        rental.customer_id,
         --For each customer, look at ALL their rentals and flag if ANY were in November/december.
         BOOL_OR(EXTRACT(MONTH FROM rental_date) = 11) as has_november,
         BOOL_OR(EXTRACT(MONTH FROM rental_date) = 12) as has_december
     FROM rental
-    WHERE rental_date BETWEEN '2005-01-01' AND '2005-12-31'
-    GROUP BY customer_id
+    INNER JOIN payment ON rental.rental_id = payment.rental_id
+    WHERE rental.return_date IS NOT NULL AND (rental.rental_date BETWEEN '2005-01-01' AND '2005-12-31')
+    GROUP BY rental.customer_id
   ) sq8
 ),
 /*
---ALT TO BLOOL_OR
+--ALT TO BOOL_OR
 SELECT sq0.customer_id,
     MAX(rented_november) AS has_rented_in_nov,
     MAX(rented_december) AS has rented_in_dec,
@@ -290,6 +295,8 @@ rental_gap_analysis AS (
         END AS diff
     FROM customer c4
     INNER JOIN rental r4 ON c4.customer_id = r4.customer_id
+    INNER JOIN payment p4 ON r4.rental_id = p4.rental_id
+    WHERE r4.return_date IS NOT NULL AND (r4.rental_date BETWEEN '2005-01-01' AND '2005-12-31')
     ORDER BY 1,2 ASC
     ) sq9
     GROUP BY sq9.customer_id
@@ -306,6 +313,7 @@ top_cat1 AS (
                     ROW_NUMBER() OVER (PARTITION BY c3.customer_id ORDER BY COUNT(*) DESC) AS rn
                     FROM customer c3
                     INNER JOIN rental r3 ON c3.customer_id = r3.customer_id
+                    INNER JOIN payment p5  ON r3.rental_id = p5.rental_id
                     INNER JOIN inventory i ON r3.inventory_id = i.inventory_id
                     INNER JOIN film f ON i.film_id = f.film_id
                     INNER JOIN film_category fc ON f.film_id = fc.film_id
@@ -328,6 +336,7 @@ SELECT sq11.customer_id, sq11.name
                     ROW_NUMBER() OVER (PARTITION BY c3.customer_id ORDER BY COUNT(*) DESC) AS rn
                     FROM customer c3
                     INNER JOIN rental r3 ON c3.customer_id = r3.customer_id
+                    INNER JOIN payment p6 ON r3.rental_id = p6.rental_id
                     INNER JOIN inventory i ON r3.inventory_id = i.inventory_id
                     INNER JOIN film f ON i.film_id = f.film_id
                     INNER JOIN film_category fc ON f.film_id = fc.film_id
@@ -398,6 +407,7 @@ FROM (
     ORDER BY 1 ASC
 ) sq10
 INNER JOIN rental r5 ON sq10.customer_id = r5.customer_id
+INNER JOIN payment p7 ON r5.rental_id = p7.rental_id
 INNER JOIN payment p2 ON r5.rental_id = p2.rental_id
 INNER JOIN customer c5 ON sq10.customer_id = c5.customer_id
 INNER JOIN top_cat1 tc1 ON sq10.customer_id = tc1.customer_id

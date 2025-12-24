@@ -1,7 +1,7 @@
 /* Average revenue per customer (subquery + CTE versions) */
 -- Subquery Version
 SELECT 
-  CONCAT(ROUND(AVG(total_revenue), 2), '$') AS avg_revenue_per_customer
+  CONCAT('$', ROUND(AVG(total_revenue), 2)) AS avg_revenue_per_customer
 FROM (
     SELECT customer_id,
       SUM(amount) AS total_revenue
@@ -16,5 +16,5 @@ WITH customer_revenue AS (
   FROM payment
   GROUP BY customer_id
 )
-SELECT CONCAT(ROUND(AVG(total_revenue), 2), '$') AS avg_revenue_per_customer
+SELECT CONCAT('$', ROUND(AVG(total_revenue), 2)) AS avg_revenue_per_customer
 FROM customer_revenue;

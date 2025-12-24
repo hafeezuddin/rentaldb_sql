@@ -42,7 +42,7 @@ INNER JOIN rental r ON i.inventory_id = r.inventory_id
 INNER JOIN film_category fc ON f.film_id = fc.film_id
 INNER JOIN category cat ON fc.category_id = cat.category_id
 INNER JOIN payment p ON r.rental_id = p.rental_id AND r.return_date IS NOT NULL
-WHERE r.return_date IS NOT NULL
+WHERE r.return_date IS NOT NULL AND (r.rental_date >= '2005-01-01' AND r.rental_date <= '2005-12-31')
 GROUP BY 1,2,3,4
 ),
 -- CTE to find currently available inventory (excluding unreturned rentals)
@@ -74,7 +74,7 @@ SELECT x2.film_id,
         INNER JOIN inventory i ON f.film_id = i.film_id
         INNER JOIN rental r ON i.inventory_id = r.inventory_id
         INNER JOIN available_inventory2 av_ai ON i.film_id = av_ai.film_id
-        WHERE r.return_date IS NOT NULL
+        WHERE r.return_date IS NOT NULL AND (r.rental_date >= '2005-01-01' AND r.rental_date <= '2005-12-31')
         ORDER BY f.film_id, i.inventory_id
     ) x2
 GROUP BY 1, x2.total_invent
