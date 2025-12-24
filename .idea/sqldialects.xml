@@ -30,6 +30,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customers_above_avg_spend.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customers_renting_premium_films.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/premium_films_by_rate.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/avg_rental_duration_per_film.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
   </component>
 </project>
