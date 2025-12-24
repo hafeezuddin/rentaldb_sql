@@ -7,6 +7,7 @@ Check which of these recommended films are actually in stock
 Combine all this into a clean list of 10 film recommendations for customer_id = 1 */
 
 -- CTE to find the top 3 most rented film categories for a specific customer (customer_id = 1)
+--Considering all the data available including unpaid rentals and data from all years.
 WITH pop_cat AS (
   SELECT 
     c.customer_id, 

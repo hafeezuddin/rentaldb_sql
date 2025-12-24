@@ -1,9 +1,9 @@
-Find the top 5 customers who:
+/*Find the top 5 customers who:
 Have spent the most total rental fees (based on payment.amount).
 Also have rented films from at least 5 different categories.
 Display for each customer: customer_id,first_name & last_name,total_spent, number_of_categories_rented
 Order the result by total_spent (highest first). */
---Main Query to retrive customer details, total spend, no.of unique categories they rented from
+--Main Query to retrieve customer details, total spend, no.of unique categories they rented from
 SELECT 
     c.customer_id,
     c.first_name, 
@@ -40,7 +40,7 @@ HAVING count(DISTINCT ct.NAME) >=5
 spend_criteria AS (
   SELECT c.customer_id, SUM(p.amount) AS total_spent
   FROM customer c
-  INNER JOIN rental r ON c.customer_id = r.customer_id --Incase customer has 2 rentals and 1 payment (x Joined using c.customer_id).
+  INNER JOIN rental r ON c.customer_id = r.customer_id --In case customer has 2 rentals and 1 payment (x Joined using c.customer_id).
   INNER JOIN payment p ON r.rental_id = p.rental_id
   GROUP BY 1
 )

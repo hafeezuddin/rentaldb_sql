@@ -73,9 +73,7 @@
  */
 --CTE to retrieve core metrics for each film (#Integrated)
 WITH film_data AS (
-    SELECT f.film_id,
-        f.replacement_cost,
-        f.title,
+    SELECT f.film_id, f.replacement_cost, f.title,
         COUNT(i.inventory_id) AS no_of_copies_avilable,
         SUM(p.amount) as total_revenue_generated,
         ROUND(SUM(p.amount) / COUNT(i.inventory_id), 2) AS revenue_per_copy,
@@ -86,27 +84,21 @@ WITH film_data AS (
         INNER JOIN payment p ON r.rental_id = p.rental_id
     WHERE r.return_date IS NOT NULL
         AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
-    GROUP BY 1,
-        2
+    GROUP BY 1,2,3
     ORDER BY 1 ASC
 ),
 --CTE to retrieve Monthly film rental patterns (#Integrated)
 rentals_monthly AS (
-    SELECT f.film_id,
-        f.title,
-        EXTRACT(
-            'Month'
-            FROM r.rental_date
-        ) AS month,
+    SELECT f.film_id, f.title,
+        EXTRACT('Month' FROM r.rental_date) AS month,
         COUNT(*) AS rentals
     FROM film f
         INNER JOIN inventory i ON f.film_id = i.film_id
         INNER JOIN rental r ON i.inventory_id = r.inventory_id
+        INNER JOIN payment p ON r.rental_id = p.rental_id
     WHERE r.return_date IS NOT NULL
         AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
-    GROUP BY 1,
-        2,
-        3
+    GROUP BY 1,2,3
     ORDER BY 1
 ),
 --CTE to identify Peak Demand Periods (#Integrated)
@@ -141,6 +133,7 @@ peak_period AS (
                             FROM film f
                                 INNER JOIN inventory i ON f.film_id = i.film_id
                                 INNER JOIN rental r ON i.inventory_id = r.inventory_id
+                                INNER JOIN payment p ON r.rental_id = p.rental_id
                             WHERE r.return_date IS NOT NULL
                                 AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
                             GROUP BY 1,
@@ -166,6 +159,7 @@ rental_duration_analysis AS (
             FROM film f
                 INNER JOIN inventory i ON f.film_id = i.film_id
                 INNER JOIN rental r ON i.inventory_id = r.inventory_id
+                INNER JOIN payment p ON r.rental_id = p.rental_id
             WHERE r.return_date IS NOT NULL
                 AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
             ORDER BY f.film_id ASC
@@ -188,15 +182,11 @@ copy_utilization AS (
             FROM film f
                 INNER JOIN inventory i ON f.film_id = i.film_id
                 INNER JOIN rental r ON i.inventory_id = r.inventory_id
+                INNER JOIN payment p ON r.rental_id = p.rental_id
             WHERE r.return_date IS NOT NULL
                 AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
-            GROUP BY 1,
-                2,
-                3,
-                4
-            ORDER BY 1,
-                3,
-                4 ASC
+            GROUP BY 1,2,3,4
+            ORDER BY 1,3,4 ASC
         ) sq5
     GROUP BY 1
 )
@@ -251,7 +241,7 @@ SELECT SUM(cost_savings) AS total_cost_savings,
                     CASE
                         WHEN sq7.category = 'Work Horses - Maintain Copies'
                         OR sq7.category = 'Sleepers - Keep but dont expand' THEN sq7.no_of_copies_avilable
-                        WHEN sq7.category = 'Oppurtunities -Increase by 1-2 copies' THEN sq7.no_of_copies_avilable + 1
+                        WHEN sq7.category = 'Opportunities -Increase by 1-2 copies' THEN sq7.no_of_copies_avilable + 1
                         WHEN sq7.category = 'Cost Centers -  Phase out'
                         OR sq7.category = 'Underperformers - Remove excess copies' THEN 1
                         WHEN sq7.category = 'TBA' THEN sq7.no_of_copies_avilable
@@ -269,7 +259,7 @@ SELECT SUM(cost_savings) AS total_cost_savings,
                                 AND avg_monthly_rentals_per_copy < 1.5 THEN 'Sleepers - Keep but dont expand' --Tier #3
                                 WHEN sq6.concentration > 30
                                 AND sq6.p_rank > 0.50
-                                AND sq6.no_of_copies_avilable < 3 THEN 'Oppurtunities -Increase by 1-2 copies' --Tier #4
+                                AND sq6.no_of_copies_avilable < 3 THEN 'Opportunities -Increase by 1-2 copies' --Tier #4
                                 WHEN sq6.rep_rank > 0.75
                                 AND sq6.cost_recovery_multiple < 1.5
                                 AND sq6.avg_monthly_rentals_per_copy < 1 THEN 'Cost Centers -  Phase out' --Tier #5

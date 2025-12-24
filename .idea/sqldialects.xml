@@ -38,6 +38,12 @@
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/rental_trends_by_location.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/total_revenue.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/yearly_and_monthly_revenue.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/category_profitability.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/fastest_growing_categories.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/fastest_growing_month-over-month.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/films_categorization.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/inventory_optimization.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/conditional_top_customers.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
   </component>
 </project>

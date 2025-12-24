@@ -4,14 +4,14 @@
  Use a CASE statement to categorize films as:
  "High Demand": Rented 30+ times | "Medium Demand": Rented 15-29 times | "Low Demand": Rented <15 times
  For each category, calculate: Number of films, Total revenue generated, Average rental rate
- Sort results by revenue contribution (highest to lowest). */
+ Sort results by revenue contribution (highest to lowest).*/
+
 -- CTE to categorize films based on the number of times each film was rented.
 WITH demandcat AS (
   SELECT 
-    f.film_id,
-    f.rental_rate,
+    f.film_id, f.rental_rate,
     COUNT(*) AS no_of_times_rented,
-    -- Use a CASE statement to classify films into demand tiers based on rental frequency.
+    -- Using a CASE statement to classify films into demand tiers based on rental frequency.
     CASE
       WHEN COUNT(*) >= 30 THEN 'High Demand'
       WHEN COUNT(*) BETWEEN 15 AND 29 THEN 'Medium Demand'
@@ -20,7 +20,9 @@ WITH demandcat AS (
   FROM film f
     INNER JOIN inventory i ON f.film_id = i.film_id
     INNER JOIN rental r ON i.inventory_id = r.inventory_id
-  GROUP BY 1
+    INNER JOIN payment p ON r.rental_id = p.rental_id
+    WHERE r.return_date IS NOT NULL AND (r.rental_date >= '2005-01-01' AND r.rental_date <= '2005-12-31')
+  GROUP BY 1,2
   ORDER BY no_of_times_rented DESC
 ),
 -- CTE to calculate revenue, average rental rate, and the number of films for each demand category.

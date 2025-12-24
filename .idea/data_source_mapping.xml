@@ -38,6 +38,12 @@
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/rental_trends_by_location.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/total_revenue.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/yearly_and_monthly_revenue.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/category_profitability.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/fastest_growing_categories.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/fastest_growing_month-over-month.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/films_categorization.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/inventory_optimization.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/conditional_top_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/cdb8df56-8a69-4b32-a297-bbf3bfab4986/console.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
   </component>
 </project>
