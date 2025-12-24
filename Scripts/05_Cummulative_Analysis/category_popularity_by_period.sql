@@ -10,6 +10,8 @@ FROM category c
   JOIN film_category fc ON c.category_id = fc.category_id
   JOIN inventory i ON fc.film_id = i.film_id
   JOIN rental r ON i.inventory_id = r.inventory_id
+  JOIN payment p ON r.rental_id = p.rental_id
+  WHERE r.return_date IS NOT NULL AND (r.rental_date >= '2005-01-01' AND r.rental_date <= '2005-12-31')
 GROUP BY 1,2,3
 ORDER BY Year, month
 )

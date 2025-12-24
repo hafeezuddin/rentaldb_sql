@@ -1,4 +1,5 @@
-/* Rental trends by location (City, Country), Year and Month */
+/* Rental trends by location (City, Country), Year and Month for year 2005.
+   Paid rentals only */
 SELECT 
   co.country,
   c.city,
@@ -10,5 +11,7 @@ FROM city c
   JOIN address a ON c.city_id = a.city_id
   JOIN customer cu ON a.address_id = cu.address_id
   JOIN rental r ON cu.customer_id = r.customer_id
+  JOIN payment p ON r.rental_id = p.rental_id
+WHERE r.return_date IS NOT NULL AND (r.rental_date >='2005-01-01' AND r.rental_date <= '2005-12-31')
 GROUP BY co.country, c.city, year, month
 ORDER BY rental_count DESC;
