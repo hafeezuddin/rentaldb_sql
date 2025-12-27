@@ -43,6 +43,15 @@
     <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/fastest_growing_month-over-month.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/films_categorization.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/inventory_optimization.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/Inventory_efficiency.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/films_not_in_inventory.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/most_rented_films_in_each_category.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/never_rented_films_high_revenue_potential.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/overlooked_films.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/stats_inventory_across_stores.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/store_information.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/top_rented_films_in_each_category.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/underpriced_films.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/conditional_top_customers.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
   </component>

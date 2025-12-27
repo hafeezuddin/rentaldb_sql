@@ -4,6 +4,8 @@
  potentially indicating missed business opportunities)*/
 -- CTE to calculate revenue metrics for each film including total revenue, 
 -- average revenue per rental and inventory count
+--Considering paid rentals
+
 WITH film_metrics AS (
   SELECT f.film_id,
     f.title,
@@ -13,7 +15,7 @@ WITH film_metrics AS (
   FROM film f
     INNER JOIN inventory i ON f.film_id = i.film_id
     INNER JOIN rental r ON i.inventory_id = r.inventory_id
-    INNER JOIN payment p ON r.rental_id = p.rental_id
+    INNER JOIN payment p ON r.rental_id = p.rental_id --Considering paid rentals data
   GROUP BY 1,2
 ),
 -- CTE to calculate overall averages across all films

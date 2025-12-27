@@ -13,7 +13,8 @@ ORDER BY 1 ASC;
 SELECT f.film_id, COUNT(*)
 FROM film f
 INNER JOIN inventory i ON f.film_id = i.film_id
+--Conditional left joins (Joins only rentals that are out)
 LEFT JOIN rental r ON i.inventory_id = r.inventory_id AND r.return_date IS NULL
-WHERE r.rental_id IS NULL
+WHERE r.rental_id IS NULL --Filters currently out inventory based on conditional left join
 GROUP BY f.film_id
 ORDER BY f.film_id ASC;

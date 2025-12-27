@@ -17,17 +17,14 @@ ORDER BY f.film_id
 ),
 --CTE to find high value rentals
 abv_avg_rental_rate AS (
-  SELECT f.film_id,
-    f.title,
-    f.rental_rate
+  SELECT f.film_id, f.title, f.rental_rate
   FROM film f
   WHERE rental_rate > (
       SELECT AVG(rental_price)
       FROM (
-          SELECT f.film_id,
-            f.rental_rate AS rental_price
+          SELECT f.film_id, f.rental_rate AS rental_price
           FROM film f
-        )
+        ) t
     )
   ORDER BY f.film_id
 ),
@@ -43,8 +40,7 @@ SELECT DISTINCT f.film_id
   ORDER BY f.film_id
 )
 --Main query
-SELECT fwnr.film_id, 
-  fwnr.title
+SELECT fwnr.film_id, fwnr.title
 FROM film_with_no_rentals fwnr
 INNER JOIN abv_avg_rental_rate aarr ON fwnr.film_id = aarr.film_id
 INNER JOIN available_in_inventory aii ON aarr.film_id = aii.film_id;

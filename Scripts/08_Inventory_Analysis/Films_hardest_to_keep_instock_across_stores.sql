@@ -1,6 +1,7 @@
 /* Which specific films are hardest to keep in stock across our stores? 
 Film titles and IDs, Store locations, Total copies per film per store, Currently rented copies, Availability percentage
-Rank films by worst availability*/
+Rank films by worst availability
+Consider all the available data of all years*/
 
 -- CTE to count the total number of copies of each film available in each store.
 WITH film_info AS (

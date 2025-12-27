@@ -1,11 +1,11 @@
-/* Task: Film Inventory & Availability Analysis
+/* Task: Film Inventory & Availability Analysis */
 /*Count total films vs available films per store */
 WITH total_inventory AS (
-SELECT s.store_id, count(*) AS total_inventory
-FROM store s
-INNER JOIN inventory i ON
-s.store_id = i.store_id
-GROUP BY 1
+    SELECT s.store_id, count(*) AS total_inventory
+    FROM store s
+    INNER JOIN inventory i ON
+    s.store_id = i.store_id
+    GROUP BY 1
 ),
 rented_inventory AS (
   SELECT s.store_id, COUNT(*) AS rent_iv

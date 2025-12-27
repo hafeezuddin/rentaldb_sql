@@ -33,7 +33,7 @@ WITH film_metrics AS (
     INNER JOIN rental r ON i.inventory_id = r.inventory_id
     INNER JOIN payment p ON r.rental_id = p.rental_id
     WHERE r.return_date IS NOT NULL --Account only films that are returned.
-    GROUP BY 1
+    GROUP BY 1,2
 ),
 --CTE to calculate average_rental_duration per film and pull  actual allowed duration
 filmwise_avg_rental_duration AS (
@@ -43,7 +43,8 @@ filmwise_avg_rental_duration AS (
         FROM film f
         INNER JOIN inventory i ON f.film_id = i.film_id
         INNER JOIN rental r ON i.inventory_id = r.inventory_id
-        GROUP BY 1
+        INNER JOIN payment p ON r.rental_id = p.rental_id
+        GROUP BY 1,2
 ),
 --CTE to calculate rental_frequency
 rental_frequency AS (
@@ -53,6 +54,7 @@ rental_frequency AS (
     FROM film f
     INNER JOIN inventory i ON f.film_id = i.film_id
     INNER JOIN rental r ON i.inventory_id = r.inventory_id
+    INNER JOIN payment p ON r.rental_id = p.rental_id
     WHERE r.return_date IS NOT NULL
     GROUP BY 1
     ORDER BY 1 ASC
@@ -70,6 +72,7 @@ last_ninety_days AS (
     FROM film f
     INNER JOIN inventory i ON f.film_id = i.film_id
     INNER JOIN rental r ON i.inventory_id = r.inventory_id
+    INNER JOIN payment p ON r.rental_id = p.rental_id
     WHERE r.rental_date > '2006-01-01'::date - 90
     GROUP BY 1
 ),
@@ -91,6 +94,7 @@ store_wise_analysis AS (
     FROM film f
     INNER JOIN inventory i ON f.film_id = i.film_id
     INNER JOIN rental r ON i.inventory_id = r.inventory_id
+    INNER JOIN payment p ON r.rental_id = p.rental_id
     WHERE r.return_date IS NOT NULL
     GROUP BY 1
     ORDER BY f.film_id ASC
