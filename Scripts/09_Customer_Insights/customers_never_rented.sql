@@ -4,4 +4,4 @@ SELECT
 FROM customer c
   LEFT JOIN rental r ON c.customer_id = r.customer_id
 WHERE r.customer_id IS NULL
-LIMIT 5;
+ORDER BY c.customer_id ASC;

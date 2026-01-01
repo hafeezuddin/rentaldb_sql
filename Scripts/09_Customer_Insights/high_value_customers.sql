@@ -25,6 +25,7 @@ premium_customers AS (
     SELECT c.customer_id, f.film_id, COUNT(*) AS times_rented
     FROM customer c
     INNER JOIN rental r ON c.customer_id = r.customer_id
+    INNER JOIN payment p ON r.rental_id = p.rental_id --To filter paid rentals for analysis
     INNER JOIN inventory i ON r.inventory_id = i.inventory_id
     INNER JOIN film f ON i.film_id = f.film_id
     WHERE i.film_id IN (SELECT f.film_id FROM film f

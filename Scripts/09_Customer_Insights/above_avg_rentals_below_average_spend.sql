@@ -2,6 +2,8 @@
 /*- Find customers who have rented films more than the average number of times but whose 
 total spend is below the average total spend across all customers. */
 --CTE to find customers who rented more than average number of times
+--Consider both paid and unpaid rentals
+
 WITH above_avg_rentals AS (
 SELECT c.customer_id,
     c.first_name,
@@ -16,7 +18,7 @@ HAVING COUNT(*) > (
                     COUNT(*) AS count2
                 FROM rental r2
                 GROUP BY r2.customer_id
-            )
+            ) as cic2
     )
 ORDER BY abv_avg_rentals_count DESC
 ),
@@ -35,7 +37,7 @@ below_avg_payment AS (
                         SUM(p2.amount) AS total_spent2
                     FROM payment p2
                     GROUP BY p2.customer_id
-                )
+                ) as s
         )
 )
 --Main query to filter customers who rent above average times but spent below average.

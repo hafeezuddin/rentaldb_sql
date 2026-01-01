@@ -7,8 +7,8 @@ WITH this_year_rentals AS (
 SELECT c.customer_id, c.first_name, c.last_name, r.rental_date,
 EXTRACT('month' FROM r.rental_date) AS month
 FROM customer c
-INNER JOIN rental r ON c.customer_id = r.customer_id
-WHERE r.rental_date BETWEEN '2005-01-01' AND '2005-12-31'
+INNER JOIN rental r ON c.customer_id = r.customer_id --Consider both paid and unpaid rentals
+WHERE r.rental_date BETWEEN '2005-01-01' AND '2005-12-31' --Analysis for year 2005
 ),
 --CTE to count customers ordering
 every_month AS (

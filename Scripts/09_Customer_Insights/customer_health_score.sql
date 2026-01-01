@@ -35,29 +35,29 @@ Sort by: health_score ASC, last_2005_rental ASC */
 --CTE for recency metric
 WITH recency_cte AS (
     SELECT sq1.customer_id, 
-        sq1.last_2005_rental AS last_2005_rental,
-        sq1.first_2005_rental AS first_2005_rental,
+        sq1.last_2005_rental_month AS last_2005_rental_month,
+        sq1.first_2005_rental_month AS first_2005_rental_month,
         sq1.total_rentals,
         sq1.total_spent,
     CASE
-        WHEN sq1.last_2005_rental BETWEEN 10 AND 12
+        WHEN sq1.last_2005_rental_month BETWEEN 10 AND 12
             THEN 'Q4'
-         WHEN sq1.last_2005_rental BETWEEN 07 AND 09
+         WHEN sq1.last_2005_rental_month BETWEEN 07 AND 09
             THEN 'Q3'
         ELSE
             'H1'
         END AS quarter_classification,
     CASE
-        WHEN sq1.last_2005_rental BETWEEN 10 AND 12
+        WHEN sq1.last_2005_rental_month BETWEEN 10 AND 12
             THEN 30
-        WHEN sq1.last_2005_rental BETWEEN 07 AND 09
+        WHEN sq1.last_2005_rental_month BETWEEN 07 AND 09
             THEN 15
         ELSE 5
         END AS recency_Score
     FROM (
         SELECT c.customer_id,
-        EXTRACT(MONTH FROM MAX(r.rental_date)) AS last_2005_rental,
-        EXTRACT(MONTH FROM MIN(r.rental_date)) AS first_2005_rental,
+        EXTRACT(MONTH FROM MAX(r.rental_date)) AS last_2005_rental_month,
+        EXTRACT(MONTH FROM MIN(r.rental_date)) AS first_2005_rental_month,
         COUNT(Distinct r.rental_id) AS total_rentals,
         SUM(p.amount) AS total_spent
         FROM customer c
@@ -85,6 +85,7 @@ frequency_cte AS (
             COUNT(DISTINCT r2.rental_id) AS total_rentals
         FROM recency_cte rc
         INNER JOIN rental r2 ON rc.customer_id = r2.customer_id
+        INNER JOIN payment p2 ON r2.rental_id = p2.rental_id
         WHERE r2.return_date IS NOT NULL AND (r2.rental_date BETWEEN '2005-01-01' AND '2005-12-31')
         GROUP BY 1
     ) sq2
@@ -102,11 +103,11 @@ spend_ranking AS (
             END spendranking
     FROM (
     SELECT rc.customer_id,
-        SUM(p2.amount) total_spent,
-        PERCENT_RANK() OVER (ORDER BY SUM(p2.amount)) AS spend_rank
+        SUM(p3.amount) total_spent,
+        PERCENT_RANK() OVER (ORDER BY SUM(p3.amount)) AS spend_rank
     FROM recency_cte rc
    INNER JOIN rental r3 ON rc.customer_id = r3.customer_id
-   INNER JOIN payment p2 ON r3.rental_id = p2.rental_id
+   INNER JOIN payment p3 ON r3.rental_id = p3.rental_id
    WHERE r3.return_date IS NOT NULL AND (r3.rental_date BETWEEN '2005-01-01' AND '2005-12-31')
    GROUP BY 1
     ) sq3
@@ -114,15 +115,15 @@ spend_ranking AS (
 --Aggregator Query
 SELECT rc.customer_id, 
         CONCAT(cu.first_name, ' ', cu.last_name) AS customer_name, cu.email,
-        rc.last_2005_rental,
-        rc.first_2005_rental,
+        rc.last_2005_rental_month,
+        rc.first_2005_rental_month,
         rc.total_spent,
         rc.recency_score,
         fc.frequency_score,
         sr.spendranking,
         rc.recency_score + fc.frequency_score + sr.spendranking AS health_score,
         CASE
-            WHEN rc.last_2005_rental < 10 AND rc.recency_score + fc.frequency_score + sr.spendranking < 40
+            WHEN rc.last_2005_rental_month < 10 AND rc.recency_score + fc.frequency_score + sr.spendranking < 40
                 THEN 'High Risk'
             ELSE
                 'Low Risk'
@@ -131,4 +132,4 @@ FROM recency_cte rc
 INNER JOIN frequency_cte fc ON rc.customer_id = fc.customer_id
 INNER JOIN spend_ranking sr ON fc.customer_id = sr.customer_id
 INNER JOIN customer cu ON sr.customer_id = cu.customer_id
-ORDER BY health_score ASC, last_2005_rental ASC;
+ORDER BY health_score ASC, last_2005_rental_month ASC;

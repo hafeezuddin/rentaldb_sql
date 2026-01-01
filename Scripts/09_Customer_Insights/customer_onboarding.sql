@@ -30,9 +30,9 @@ A focused analysis answering:
     Short-term ROI: Do premium-start customers generate enough additional 2005 revenue to justify the higher inventory cost?
     Engagement Pattern: Do they rent more frequently within their first year?
     Quality Preference: Do they develop a taste for premium content?
-Data Scope: January 1 - December 31, 2005 only */
+Data Scope: January 1 - December 31, 2005 only. Consider both paid and unpaid rentals */
 
---CTE to filter who started rentals with with premium films (1st ever rental)
+--CTE to filter who started rentals with premium films (1st ever rental)
 WITH customer_first_rental_analysis AS (
 SELECT sq1.customer_id, 
     sq1.rental_date, 

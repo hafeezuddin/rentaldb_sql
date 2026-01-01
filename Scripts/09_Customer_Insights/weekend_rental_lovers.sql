@@ -1,6 +1,6 @@
 /* Weekend Rental Lovers
 Find the top 10 customers who rented the most movies on weekends (Saturday and Sunday).*/
-
+--Consider both paid and unpaid rentals.
 --CTE to find top 10 customers who rented most on weekends with corresponding metric (count)
 WITH wknd_rental AS 
 (
@@ -29,7 +29,7 @@ wknd_rental.first_name,
 wknd_rental.wk_rental_count, --bigint
 rbci.total_rentals, --bigint
 ROUND((wknd_rental.wk_rental_count::numeric/rbci.total_rentals::numeric)*100,2) AS percentgae_of_rentals_on_weekends
---Percetage calculation/dt conversion into numeric for percentage calculation
+--Percentage calculation/dt conversion into numeric for percentage calculation
 FROM wknd_rental
 INNER JOIN rentals_by_customer_id rbci ON wknd_rental.customer_id = rbci.customer_id
 ORDER BY percentgae_of_rentals_on_weekends DESC

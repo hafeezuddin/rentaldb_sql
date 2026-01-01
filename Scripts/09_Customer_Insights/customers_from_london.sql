@@ -1,8 +1,9 @@
-/* Customers from London */
+/* Customers who are from city London */
 SELECT 
   CONCAT(c.first_name,' ',c.last_name) AS customer_name,
-  ci.city
+  ci.city, c.email
 FROM customer c
   JOIN address a ON c.address_id = a.address_id
   JOIN city ci ON a.city_id = ci.city_id
-WHERE ci.city = 'London';
+WHERE ci.city = 'London'
+ORDER BY customer_name asc;
