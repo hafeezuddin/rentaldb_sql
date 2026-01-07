@@ -21,92 +21,121 @@ Rank customers by lifetime value percentile
 Flag customers who haven't rented in > 150 days as "at-risk" **/
 
 --CTE for params
-WITH param_cte AS (SELECT DATE '01-01-2006' AS analysis_date,
-                          DATE '01-01-2005' AS analysis_start_date,
-                          DATE '12-31-2005' AS analysis_end_date,
-                          150 AS activity_cut_off
-                   ),
-rental_metrics AS (
-    SELECT r.customer_id,
-        r.rental_id,
-        cat.name,
-        r.rental_date,
-        p.amount,
-        st.first_name,
-        st.store_id,
-        pc.analysis_date,
-        pc.analysis_start_date,
-        pc.analysis_end_date
-    FROM rental r
-    INNER JOIN payment p ON r.rental_id = p.rental_id
-    INNER JOIN inventory i ON r.inventory_id = i.inventory_id
-    INNER JOIN film_category fc ON i.film_id = fc.film_id
-    INNER JOIN category cat ON fc.category_id = cat.category_id
-    INNER JOIN staff st on r.staff_id = st.staff_id
+EXPLAIN ANALYZE
+WITH param_cte AS (SELECT DATE '2006-01-01' AS analysis_date,
+                          DATE '2005-01-01' AS analysis_start_date,
+                          DATE '2005-12-31' AS analysis_end_date,
+                          150               AS activity_cut_off),
+     --CTE with all the necessary tables joined required for metrics calculation.
+     rental_metrics AS (SELECT r.customer_id,
+                               r.rental_id,
+                               cat.name,
+                               r.rental_date,
+                               p.amount,
+                               st.first_name,
+                               st.store_id,
+                               pc.analysis_date,
+                               pc.analysis_start_date,
+                               pc.analysis_end_date
+                        FROM rental r
+                                 INNER JOIN payment p ON r.rental_id = p.rental_id
+                                 INNER JOIN inventory i ON r.inventory_id = i.inventory_id
+                                 INNER JOIN film_category fc ON i.film_id = fc.film_id
+                                 INNER JOIN category cat ON fc.category_id = cat.category_id
+                                 INNER JOIN staff st on r.staff_id = st.staff_id
 
-    CROSS JOIN param_cte pc
-    WHERE r.rental_date >= pc.analysis_start_date AND r.rental_date <= pc.analysis_end_date
-    ),
-customer_fav_cat AS (
-    SELECT t1.customer_id, t1.name
-    FROM (SELECT rm.customer_id, rm.name, COUNT(DISTINCT rm.rental_id), row_number() over (PARTITION BY rm.customer_id ORDER BY COUNT(DISTINCT rm.rental_id) DESC, rm.name ASC) catrank
-    FROM rental_metrics rm
-    GROUP BY 1, 2) t1
-    WHERE t1.catrank = 1
-    ),
-customer_life_time_value AS (
-    SELECT rm.customer_id,
-           SUM(rm.amount) AS life_time_spent FROM rental_metrics rm
-    GROUP BY rm.customer_id
-),
-rental_info AS (SELECT rm.customer_id, MAX(rm.rental_date) AS latest_rental_date, COUNT(distinct rm.rental_id) AS total_rentals,
-                                  EXTRACT(EPOCH FROM (rm.analysis_date - MAX(rm.rental_date))) /
-                                  86400.0 AS days_since_last_rental,
-                           CASE
-                              WHEN EXTRACT(EPOCH FROM (rm.analysis_date - MAX(rm.rental_date))) /
-                                  86400.0 < 150
-                              THEN 'Active'
-                              ELSE
-                                    'In-active'
-                            END AS status
-                           FROM rental_metrics rm
-                           GROUP BY rm.customer_id, rm.analysis_date
-                           ),
-primary_store AS (
-                  SELECT t3.customer_id, t3.store_id
-                  FROM (SELECT rm.customer_id, rm.store_id, COUNT(DISTINCT rm.rental_id),
-                        ROW_NUMBER() OVER (PARTITION BY rm.customer_id ORDER BY COUNT(DISTINCT rm.rental_id) DESC) AS fav_store_rank
-                        FROM rental_metrics rm
-                        GROUP BY rm.customer_id, rm.store_id
-                  ) t3
-                  WHERE t3.fav_store_rank = 1
-),
-most_serving_staff_member AS (
-    SELECT t3.customer_id, t3.first_name
-                  FROM (SELECT rm.customer_id, rm.first_name, COUNT(DISTINCT rm.rental_id),
-                        ROW_NUMBER() OVER (PARTITION BY rm.customer_id ORDER BY COUNT(DISTINCT rm.rental_id) DESC) AS top_staff_rank
-                        FROM rental_metrics rm
-                        GROUP BY rm.customer_id, rm.first_name
-                  ) t3
-                  WHERE t3.top_staff_rank = 1
-    ),
-rental_frequency AS (
-    SELECT rm.customer_id,
-    COUNT(DISTINCT rm.rental_id)/(EXTRACT(MONTH FROM age(max(rm.rental_date), min(rm.rental_date))) + 1) AS rental_frequency
-    FROM rental_metrics rm
-    GROUP BY rm.customer_id
-    )
+                                 CROSS JOIN param_cte pc
+                        WHERE r.rental_date >= pc.analysis_start_date
+                          AND r.rental_date <= pc.analysis_end_date),
 
-SELECT c.customer_id AS customer_id, CONCAT(c.first_name,' ', c.last_name) AS customer_full_name,
-       c.email AS customer_email, cfc.name AS fav_category, cftv.life_time_spent AS period_total_spent_amount, ri.total_rentals AS total_period_rentals,
-       ri.days_since_last_rental AS days_since_last_rented, ri.status AS status_of_customer,
-       ps.store_id AS fav_store, mstm.first_name AS staff_who_served_most, ROUND(rf.rental_frequency,2) AS rental_frequency
+--CTE to retrieve each customer favourite category based on number of rentals he/she rents from each category.
+     customer_fav_cat AS (SELECT t1.customer_id, t1.name
+                          FROM (SELECT rm.customer_id,
+                                       rm.name,
+                                       COUNT(DISTINCT rm.rental_id),
+                                       row_number()
+                                       over (PARTITION BY rm.customer_id ORDER BY COUNT(DISTINCT rm.rental_id) DESC, rm.name ASC) catrank
+                                FROM rental_metrics rm
+                                GROUP BY 1, 2) t1
+                          WHERE t1.catrank = 1),
+
+--Customer lifetime value (Total revenue generated by each customer for the analysis period 2005-01-01 AND 2005-12-31)
+     customer_life_time_value AS (SELECT rm.customer_id,
+                                         COALESCE(SUM(rm.amount), 0)                        AS life_time_spent,
+                                         percent_rank() over (ORDER BY sum(rm.amount) DESC) AS spent_rank
+                                  FROM rental_metrics rm
+                                  GROUP BY rm.customer_id),
+
+--CTE for calculating rental data metrics, customer active/inactive status, Total no.of rentals
+     rental_info AS (SELECT rm.customer_id,
+                            MAX(rm.rental_date)                                                    AS latest_rental_date,
+                            COALESCE(COUNT(distinct rm.rental_id), 0)                              AS total_rentals,
+                            EXTRACT(EPOCH FROM (rm.analysis_date - MAX(rm.rental_date))) /
+                            86400.0                                                                AS days_since_last_rental,
+                            CASE
+                                WHEN EXTRACT(EPOCH FROM (rm.analysis_date - MAX(rm.rental_date))) /
+                                     86400.0 < activity_cut_off
+                                    THEN 'Active'
+                                ELSE
+                                    'Inactive'
+                                END                                                                AS status,
+                            CASE
+                                WHEN EXTRACT(EPOCH FROM (rm.analysis_date - MAX(rm.rental_date))) /
+                                     86400.0 < activity_cut_off
+                                    THEN 'Not at Risk'
+                                ELSE
+                                    'Risks'
+                                END                                                                AS risk_status
+                     FROM rental_metrics rm
+                              CROSS JOIN param_cte
+                     GROUP BY rm.customer_id, rm.analysis_date, activity_cut_off),
+--CTE to retrieve customer and his primary store based on no.of.rentals from each store.
+     -- Store which served the customer the most is customers primary store.
+     primary_store AS (SELECT t3.customer_id, t3.store_id
+                       FROM (SELECT rm.customer_id,
+                                    rm.store_id,
+                                    COUNT(DISTINCT rm.rental_id),
+                                    ROW_NUMBER()
+                                    OVER (PARTITION BY rm.customer_id ORDER BY COUNT(DISTINCT rm.rental_id) DESC) AS fav_store_rank
+                             FROM rental_metrics rm
+                             GROUP BY rm.customer_id, rm.store_id) t3
+                       WHERE t3.fav_store_rank = 1),
+--CTE to retrieve records of each customer against who served him the most.
+     most_serving_staff_member AS (SELECT t3.customer_id, t3.first_name
+                                   FROM (SELECT rm.customer_id,
+                                                rm.first_name,
+                                                COUNT(DISTINCT rm.rental_id),
+                                                ROW_NUMBER()
+                                                OVER (PARTITION BY rm.customer_id ORDER BY COUNT(DISTINCT rm.rental_id) DESC) AS top_staff_rank
+                                         FROM rental_metrics rm
+                                         GROUP BY rm.customer_id, rm.first_name) t3
+                                   WHERE t3.top_staff_rank = 1),
+--CTE to calculate rental frequency of each customer.
+     rental_frequency AS (SELECT rm.customer_id,
+                                 ROUND(COUNT(DISTINCT rm.rental_id)::NUMERIC /
+                                       NULLIF(COUNT(DISTINCT DATE_TRUNC('MONTH', rm.rental_date)), 0),
+                                       2) AS rental_frequency
+                          FROM rental_metrics rm
+                          GROUP BY rm.customer_id)
+--Main query to integrate all the metrics
+SELECT c.customer_id                          AS customer_id,
+       CONCAT(c.first_name, ' ', c.last_name) AS customer_full_name,
+       c.email                                AS customer_email,
+       cfc.name                               AS fav_category,
+       cftv.life_time_spent                   AS period_total_spent_amount,
+       cftv.spent_rank,
+       ri.total_rentals                       AS total_period_rentals,
+       ri.days_since_last_rental              AS days_since_last_rented,
+       ri.status                              AS status_of_customer,
+       ri.risk_status                         AS risk_flag,
+       ps.store_id                            AS fav_store,
+       mstm.first_name                        AS staff_who_served_most,
+       ROUND(rf.rental_frequency, 2)          AS rental_frequency
 FROM customer c
-JOIN customer_fav_cat cfc ON c.customer_id = cfc.customer_id
-JOIN customer_life_time_value cftv ON c.customer_id = cftv.customer_id
-JOIN rental_info ri ON c.customer_id = ri.customer_id
-JOIN primary_store ps ON c.customer_id = ps.customer_id
-JOIN most_serving_staff_member mstm ON c.customer_id = mstm.customer_id
-JOIN rental_frequency rf ON c.customer_id = rf.customer_id;
-
-
+         JOIN customer_fav_cat cfc ON c.customer_id = cfc.customer_id
+         JOIN customer_life_time_value cftv ON c.customer_id = cftv.customer_id
+         JOIN rental_info ri ON c.customer_id = ri.customer_id
+         JOIN primary_store ps ON c.customer_id = ps.customer_id
+         JOIN most_serving_staff_member mstm ON c.customer_id = mstm.customer_id
+         JOIN rental_frequency rf ON c.customer_id = rf.customer_id
+ORDER BY cftv.life_time_spent DESC;
