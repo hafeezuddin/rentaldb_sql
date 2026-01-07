@@ -59,6 +59,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_health_score.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_onboarding.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_value_behavior.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_value_insights.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_who_rent_every_month.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customers_from_london.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customers_multiple_stores.sql" dialect="PostgreSQL" />
