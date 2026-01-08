@@ -3,6 +3,7 @@ Requirements:
 Find customers who have rented at least once in every month of the current year (2005)
 Show customer details and their monthly rental consistency */
 --CTE to select customers who ordered in 2005 (Assuming we are in dec 2005)
+
 WITH this_year_rentals AS (
 SELECT c.customer_id, c.first_name, c.last_name, r.rental_date,
 EXTRACT('month' FROM r.rental_date) AS month
