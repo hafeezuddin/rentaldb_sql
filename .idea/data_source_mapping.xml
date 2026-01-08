@@ -59,8 +59,6 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_health_score.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_onboarding.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_value_insights_pr.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_who_rent_every_month.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_who_rent_every_month_pr.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customers_from_london.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customers_multiple_stores.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customers_never_rented.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
@@ -68,6 +66,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/each_customer_fav_category.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/high_value_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/late_returns.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_customer_who_rent_every_month.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/unreturned_film_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/weekend_rental_lovers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/cdb8df56-8a69-4b32-a297-bbf3bfab4986/console.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />

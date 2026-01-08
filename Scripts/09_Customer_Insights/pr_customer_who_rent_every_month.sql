@@ -14,7 +14,7 @@ base_cte AS (
     SELECT DISTINCT r.customer_id, c.first_name, c.email, pc.analysis_end_date, pc.analysis_start_date,
            DATE_TRUNC('Month', r.rental_date) AS rental_dates_truncated
     FROM rental r
-    JOIN payment p ON r.rental_id = p.rental_id
+    JOIN payment p ON r.rental_id = p.rental_id -- Joined to filter unpaid rentals.
     JOIN customer c ON r.customer_id = c.customer_id
     CROSS JOIN param_cte pc
     WHERE r.rental_date >= pc.analysis_start_date AND r.rental_date <= pc.analysis_end_date
@@ -40,7 +40,7 @@ for_consistency AS (
                 (EXTRACT(MONTH FROM MAX(bc.rental_dates_truncated)) - EXTRACT(MONTH FROM MIN(bc.rental_dates_truncated))) + 1,0)
     AS consistency
     FROM base_cte bc
-    GROUP BY bc.customer_id,bc.analysis_end_date
+    GROUP BY bc.customer_id
     )
 --Main query to integrate metrics
 SELECT ctm.customer_id, ctm.first_name, ctm.email, fc.consistency
