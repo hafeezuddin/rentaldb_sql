@@ -63,10 +63,10 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customers_spent_most_on_action_comedy.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/each_customer_fav_category.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/high_value_customers.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/late_returns.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_active_customers.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_customer_value_insights.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_customer_who_rent_every_month.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_late_returns.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/unreturned_film_customers.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/weekend_rental_lovers.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
