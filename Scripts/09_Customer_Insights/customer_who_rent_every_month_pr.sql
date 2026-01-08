@@ -19,12 +19,18 @@ base_cte AS (
     CROSS JOIN param_cte pc
     WHERE r.rental_date >= pc.analysis_start_date AND r.rental_date <= pc.analysis_end_date
     ),
+
+--CTE to list customers who rented at least once in each month of 2005
 customers_tw_months AS (
     SELECT bc.customer_id, bc.first_name, bc.email
     FROM base_cte bc
     GROUP BY bc.customer_id, bc.first_name, bc.email
     HAVING COUNT(DISTINCT bc.rental_dates_truncated) = 12
     ),
+
+--CTE to calculate consistency of a customer.
+--Logic: No.of.months with at least one rental/ No. of months customer is active (no.of months between 1st and last rental)
+--Year 2005 filter already applied on base_cte to only look into 2005 data.
 for_consistency AS (
     SELECT bc.customer_id, COUNT(DISTINCT bc.rental_dates_truncated) AS total_rental_months,
            min(bc.rental_dates_truncated), max(bc.rental_dates_truncated),
@@ -36,6 +42,7 @@ for_consistency AS (
     FROM base_cte bc
     GROUP BY bc.customer_id,bc.analysis_end_date
     )
+--Main query to integrate metrics
 SELECT ctm.customer_id, ctm.first_name, ctm.email, fc.consistency
 FROM customers_tw_months ctm
 JOIN for_consistency fc ON ctm.customer_id = fc.customer_id;
