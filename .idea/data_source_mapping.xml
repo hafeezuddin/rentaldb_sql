@@ -68,7 +68,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_customers_from_london.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_late_returns.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_premium_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/unreturned_film_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_unreturned_film_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/weekend_rental_lovers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/cdb8df56-8a69-4b32-a297-bbf3bfab4986/console.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
   </component>
