@@ -4,7 +4,7 @@ total spend is below the average total spend across all customers.
 --Consider both paid and unpaid rentals */
 
 --Base CTE for customer rental data
-WITH rentals_info AS (SELECT DISTINCT r.customer_id, p.amount, r.rental_id
+WITH rentals_info AS (SELECT r.customer_id, r.rental_id, p.amount
                       FROM rental r
                                LEFT JOIN payment p ON r.rental_id = p.rental_id
     --Considers both paid and unpaid rentals as required by business case
@@ -12,7 +12,7 @@ WITH rentals_info AS (SELECT DISTINCT r.customer_id, p.amount, r.rental_id
 ),
 --CTE to calculated customer wise total_spent and rentals.
      consolidated_customer_rental_data AS (SELECT ri.customer_id,
-                                                  SUM(ri.amount)               AS customer_total_spent, --Caution: Considers all rentals but ignores rows which have null values
+                                                  COALESCE(SUM(ri.amount),0)               AS customer_total_spent, --Caution: Considers all rentals but ignores rows which have null values
                                                   COUNT(distinct ri.rental_id) AS total_no_of_rentals   --Considers both paid and unpaid rentals
                                            FROM rentals_info ri
                                            GROUP BY ri.customer_id),
@@ -27,9 +27,8 @@ WITH rentals_info AS (SELECT DISTINCT r.customer_id, p.amount, r.rental_id
 --     (SELECT count(ri.rental_id) FROM rentals_info ri WHERE ri.amount is NOT NULL);
 
 --Main query to filter customers who rent more than average but spend less than average.
-SELECT DISTINCT ri.customer_id
-FROM rentals_info ri
-         JOIN consolidated_customer_rental_data ccrd ON ri.customer_id = ccrd.customer_id
-         CROSS JOIN average_metrics am
+SELECT ccrd.customer_id
+FROM consolidated_customer_rental_data ccrd
+CROSS JOIN average_metrics am
 WHERE ccrd.customer_total_spent < am.overall_spent_average
-  AND ccrd.total_no_of_rentals > am.avg_rentals_per_customer;
+  AND ccrd.total_no_of_rentals > am.avg_rentals_per_customer;;
