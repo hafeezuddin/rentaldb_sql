@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/Scripts/02_Dimensions_Exploration/Dimensions_Exp.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/01_Basic_Data_Exploration/01_pr_basic_Data_Exp.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/02_Dimensions_Exploration/02_pr_dimensions_exp.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/customers_rented_most_expensive.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/lifetime_value_per_customer.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/rental_counts_by_customer.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
@@ -52,7 +53,14 @@
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/store_information.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/top_rented_films_in_each_category.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/underpriced_films.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/above_avg_rentals_below_average_spend.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/01_pr_active_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/02_pr_customer_value_insights.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/03_pr_late_returns.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/04_pr_customer_who_rent_every_month.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/05_pr_customers_from_london.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/06_pr_premium_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/07_pr_unreturned_film_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/08_pr_above_average_rentals_below_average_spend.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/churn_risk.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/conditional_top_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_health_score.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
@@ -62,13 +70,6 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customers_spent_most_on_action_comedy.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/each_customer_fav_category.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/high_value_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_active_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_customer_value_insights.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_customer_who_rent_every_month.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_customers_from_london.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_late_returns.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_premium_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/pr_unreturned_film_customers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/weekend_rental_lovers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/cdb8df56-8a69-4b32-a297-bbf3bfab4986/console.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
   </component>
