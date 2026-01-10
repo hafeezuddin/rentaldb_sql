@@ -27,8 +27,8 @@ WITH rentals_info AS (SELECT r.customer_id, r.rental_id, p.amount
 --     (SELECT count(ri.rental_id) FROM rentals_info ri WHERE ri.amount is NOT NULL);
 
 --Main query to filter customers who rent more than average but spend less than average.
-SELECT ccrd.customer_id
+SELECT ccrd.customer_id, ccrd.customer_total_spent AS total_spent, ccrd.total_no_of_rentals AS total_rentals
 FROM consolidated_customer_rental_data ccrd
 CROSS JOIN average_metrics am
 WHERE ccrd.customer_total_spent < am.overall_spent_average
-  AND ccrd.total_no_of_rentals > am.avg_rentals_per_customer;;
+  AND ccrd.total_no_of_rentals > am.avg_rentals_per_customer;
