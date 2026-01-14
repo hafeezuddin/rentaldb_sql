@@ -24,7 +24,7 @@ Metric 2: 2005 Churn Risk Flag
 Objective: Flag customers who showed signs of disengaging during 2005.
 Business Rule: Flag a customer as 'High Risk' if:
 
-    Their health score is below 40 AND Their last 2005 rental was before October 1, 2005 (no activity in Q4)
+Their health score is below 40 AND Their last 2005 rental was before October 1, 2005 (no activity in Q4)
 
 Final Deliverable:
 A customer-level report showing 2005 performance:
