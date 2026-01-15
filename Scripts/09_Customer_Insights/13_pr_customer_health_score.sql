@@ -114,7 +114,5 @@ FROM rental_info ri
          JOIN customer c ON ri.customer_id = c.customer_id
          JOIN customer_health_score chs ON ri.customer_id = chs.customer_id
          JOIN active_status ac ON ri.customer_id = ac.customer_id
-ORDER BY health_score ASC, ri.latest_rental_date_2005 ASC;
-
-
+ORDER BY health_score, ri.latest_rental_date_2005;
 
