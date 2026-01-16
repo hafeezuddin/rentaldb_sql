@@ -66,11 +66,11 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/10_pr_customers_renting_from_multiple_stores.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/11_pr_conditional_top_customers.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/12_pr_customers_spent_most_on_action_comedy.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_health_score.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customer_onboarding.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/customers_never_rented.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/13_pr_customer_health_score.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/14_pr_customers_who_never_rented.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/15_pr_high_value_customers.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/16_pr_customer_onboarding.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/each_customer_fav_category.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/high_value_customers.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/weekend_rental_lovers.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
   </component>
