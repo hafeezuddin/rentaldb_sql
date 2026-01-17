@@ -70,7 +70,8 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/14_pr_customers_who_never_rented.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/15_pr_high_value_customers.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/16_pr_customer_onboarding.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/each_customer_fav_category.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/17_pr_each_customer_fav_category.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/18_pr_weekend_rental_lovers.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/weekend_rental_lovers.sql" dialect="PostgreSQL" />
     <file url="PROJECT" dialect="PostgreSQL" />
   </component>
