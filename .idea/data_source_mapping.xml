@@ -7,6 +7,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/02_pr_todays_key_metrics.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/03_pr_lifetime_value_per_customer.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/04_pr_rental_counts_by_customer.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/05_pr_top_revenue_cities.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/customers_rented_most_expensive.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top10_customers_conditions.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top5_films_high_avg_duration.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
@@ -18,7 +19,6 @@
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_five_months_rental_activity_wise.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_rented_films_per_category.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_renting_films.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_revenue_cities.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_spenders.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_ten_cities_spendwise.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_three_rev_generating_months.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
@@ -72,7 +72,6 @@
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/16_pr_customer_onboarding.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/17_pr_each_customer_fav_category.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/18_pr_weekend_rental_lovers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/weekend_rental_lovers.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/cdb8df56-8a69-4b32-a297-bbf3bfab4986/console.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
   </component>
 </project>
