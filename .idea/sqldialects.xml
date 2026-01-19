@@ -8,12 +8,12 @@
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/03_pr_lifetime_value_per_customer.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/04_pr_rental_counts_by_customer.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/05_pr_top_revenue_cities.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/06_pr_top_five_actors.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/customers_rented_most_expensive.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top10_customers_conditions.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top5_films_high_avg_duration.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_customers_for_loyalty.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_films_within_genre.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_five_actors.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_five_customers_by_total_spend_in_each_category.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_five_customers_in_each_country.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_five_months_rental_activity_wise.sql" dialect="PostgreSQL" />
