@@ -85,18 +85,18 @@ WITH param_cte AS (SELECT DATE '2005-01-01' AS analysis_period_start_date_2005,
                           t4.first_rental_date,
                           t4.next_rental_date,
                           CASE
+                              WHEN t4.next_rental_date IS NULL THEN 'Not Retained'
                               WHEN t4.next_rental_date - t4.first_rental_date < 90 THEN 'Retained'
                               ELSE 'Not Retained'
                               END AS retention_status
                    FROM (SELECT ri.customer_id,
                                 ri.rental_date                                             AS first_rental_date,
-                                LEAD(ri.rental_date)
-                                OVER (PARTITION BY ri.customer_id ORDER BY ri.rental_date) AS next_rental_date,
-                                ri.rank_based_date
+                                ri.rank_based_date,
+                                LEAD(ri.rental_date) OVER (PARTITION BY ri.customer_id ORDER BY ri.rental_date) AS next_rental_date
                          FROM rental_info ri
                          WHERE rank_based_date <= 2) t4
                    WHERE t4.rank_based_date = 1),
---This CTE aggregates metrics
+--This CTE aggregates metric
      customer_categorization AS (SELECT t1.customer_id,
                                         t1.first_rental_date,
                                         ts.total_rental_by_customer,
@@ -107,14 +107,17 @@ WITH param_cte AS (SELECT DATE '2005-01-01' AS analysis_period_start_date_2005,
                                             WHEN t1.replacement_cost > 20 THEN 'Premium Start'
                                             ELSE 'Standard Start'
                                             END AS start_cat
-                                 FROM (SELECT ri.customer_id, ri.rental_date AS first_rental_date, ri.replacement_cost
+                                 FROM (SELECT ri.customer_id,
+                                              ri.rental_date AS first_rental_date,
+                                              ri.replacement_cost
                                        FROM rental_info ri
                                        WHERE ri.rank_based_date = 1) t1
-                                          JOIN total_spent ts ON t1.customer_id = ts.customer_id
-                                          JOIN rental_frequency_of_each_customer rfec
-                                               ON t1.customer_id = rfec.customer_id
-                                          JOIN percent_mix pm ON t1.customer_id = pm.customer_id
-                                          JOIN retention re ON t1.customer_id = re.customer_id)
+
+                                JOIN total_spent ts ON t1.customer_id = ts.customer_id
+                                JOIN rental_frequency_of_each_customer rfec ON t1.customer_id = rfec.customer_id
+                                JOIN percent_mix pm ON t1.customer_id = pm.customer_id
+                                JOIN retention re ON t1.customer_id = re.customer_id
+                                 )
 --Main query groups customer and derive required metrics from aggregated metrics CTE
 SELECT cc.start_cat,
        COUNT(distinct cc.customer_id)                                                      AS no_of_customers,
