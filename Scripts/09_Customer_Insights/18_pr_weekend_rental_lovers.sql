@@ -7,7 +7,7 @@ WITH rental_info AS (SELECT r.customer_id,  --Both paid and unpaid rentals are i
                             r.rental_date::date, EXTRACT(DOW FROM r.rental_date) AS rental_day_of_week
                      FROM rental r), --ADD:payment table using inner on customer_id to filter and consider paid rentals only (Future use case).
 
---CTE To filter weekend rentals
+--CTE To flag rentals as weekend rentals or weekday rentals
      rental_flag AS (SELECT ri.customer_id,
                             ri.rental_day_of_week,
                             CASE
@@ -15,13 +15,12 @@ WITH rental_info AS (SELECT r.customer_id,  --Both paid and unpaid rentals are i
                                 ELSE 'Weekday rental'
                                 End AS dow_flag
                      FROM rental_info ri),
---CTE to calculate weekend and weekday rentals for a customers
+--CTE to calculate weekend and weekday rentals count for a customers
      consolidated_customer_rental_metrics AS (SELECT rf.customer_id,
                                                      SUM(CASE WHEN rf.dow_flag = 'Weekend rental' THEN 1 ELSE 0 END) AS weekend_rentals,
                                                      SUM(CASE WHEN rf.dow_flag = 'Weekday rental' THEN 1 ELSE 0 END) AS weekday_rentals
                                               FROM rental_flag rf
                                               GROUP BY rf.customer_id)
-
 --Main query to calculate weekend rentals share for a customer and limiting to top 10 weekend renters.
 SELECT ccrm.customer_id,
        ccrm.weekend_rentals,
