@@ -4,6 +4,7 @@ Have an average rental rate (across all their films) above the overall average r
 Output columns: actor_id, first_name, last_name, num_categories (distinct film categories), avg_rental_rate*/
 
 --BASE CTE for films and actors
+--Avoiding joining film rental prices to avoid duplicates where film is listed in two categories.
 WITH base_info AS (
     SELECT a.actor_id, a.first_name, a.last_name, fc.category_id
     FROM actor a
