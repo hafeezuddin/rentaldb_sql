@@ -14,12 +14,12 @@
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/09_pr_top_films_within_each_category.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/10_pr_top_renting_films.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/11_top_films_in_each_category.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/12_pr_top_10_cities_spend_wise.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top5_films_high_avg_duration.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_customers_for_loyalty.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_five_customers_by_total_spend_in_each_category.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_five_customers_in_each_country.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_five_months_rental_activity_wise.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_ten_cities_spendwise.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_three_rev_generating_months.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/top_two_cities_in_country_rentals.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Customer Engagement &amp; Store Performance Analysis.sql" dialect="PostgreSQL" />
