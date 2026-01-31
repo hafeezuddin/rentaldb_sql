@@ -5,6 +5,7 @@ For each of these months, show:
     Total revenue collected (from payment.amount)
 The percentage share of revenue compared to the overall revenue.*/
 
+--Base CTE for rental with date transformation for main query
 WITH base_rental_data AS (SELECT date_trunc('Month', r.rental_date) AS truncated_date,
                                  SUM(p.amount)                      AS total_revenue,
                                  COUNT(DISTINCT r.rental_id)        AS total_rentals,
@@ -12,7 +13,7 @@ WITH base_rental_data AS (SELECT date_trunc('Month', r.rental_date) AS truncated
                           FROM rental r
                                    JOIN payment p ON r.rental_id = p.rental_id
                           GROUP BY 1)
-
+--Main query to list top five revenue generating months.
 SELECT to_char(brd.truncated_date, 'YYYY-MON')                                               AS year_month_head,
        brd.total_revenue,
        brd.total_rentals,
