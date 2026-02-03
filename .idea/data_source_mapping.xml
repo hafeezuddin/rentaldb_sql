@@ -25,15 +25,16 @@
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/17_top_five_rev_generating_months.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/18_pr_top_five_films_high_avg_duration.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/19_pr_top_renters_of_each_category.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/01_pr_avg_revenue_per_customer.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/02_pr_rental_rate_higher_than_average.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/03_pr_customers_spending_above_avg_spend.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/04_pr_customers_renting_premium_films.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Customer Engagement &amp; Store Performance Analysis.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Customer_rental_behavior_analysis.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Customer_segmentation_targeted_marketing.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Inventory_optimization.SQL" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/avg_revenue_per_customer.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customer_segmentation.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customers_above_avg_spend.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customers_renting_premium_films.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
-    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/premium_films_by_rate.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/avg_rental_duration_per_film.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/busiest_hours.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/category_popularity_by_period.sql" value="cdb8df56-8a69-4b32-a297-bbf3bfab4986" />
