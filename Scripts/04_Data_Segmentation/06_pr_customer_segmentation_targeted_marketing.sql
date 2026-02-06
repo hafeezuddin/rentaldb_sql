@@ -15,11 +15,11 @@ A. Recency Score (25 points)
     Last rental in January-June 2005: 5 points
 
 B. Frequency Score (25 points)
-    15+ rentals in 2005: 25 points
-    10-14 rentals: 20 points
-    6-9 rentals: 15 points
-    3-5 rentals: 10 points
-    1-2 rentals: 5 points
+    15+ frequency in 2005: 25 points
+    10-14 frequency: 20 points
+    6-9 frequency: 15 points
+    3-5 frequency: 10 points
+    1-2 frequency: 5 points
 
 C. Monetary Score (25 points)
     Top 20% of 2005 spenders: 25 points
@@ -46,6 +46,7 @@ B. Rental Gap Analysis (50 points)
     Average days between rentals 30-60 days: 30 points
     Average days between rentals 60-90 days: 20 points
     Average days >90 days OR only one rental: 10 points
+
 
 
 CUSTOMER SEGMENTATION & OFFER STRATEGY
@@ -88,7 +89,7 @@ Business Rules:
     All calculations based on 2005 data only.
     Fixed budget of 50000 */
 
-WITH base_rental AS (SELECT r.customer_id, r.rental_id, r.inventory_id, r.rental_date, p.amount
+WITH base_rental AS (SELECT r.customer_id, r.rental_id, r.inventory_id, r.rental_date::date, p.amount
                      FROM rental r
                               LEFT JOIN payment p ON r.rental_id = p.rental_id
 --LEFT JOIN retains unpaid rentals.
@@ -125,19 +126,19 @@ WITH base_rental AS (SELECT r.customer_id, r.rental_id, r.inventory_id, r.rental
                                FROM base_rental br
                                GROUP BY br.customer_id) t2),
 --This CTE calculates monetary score
-     monetary_score AS (SELECT t3.customer_id,
-                               CASE
-                                   WHEN spent_rank >= 0.80 THEN 25
-                                   WHEN spent_rank >= 0.50 THEN 20
-                                   WHEN spent_rank >= 0.20 THEN 15
-                                   WHEN spent_rank >= 0.11 THEN 10
+     monetary_score AS (SELECT customer_id,
+                               CASE ntile_10
+                                   WHEN 10 THEN 25
+                                   WHEN 7 THEN 20
+                                   WHEN 4 THEN 15
+                                   WHEN 3 THEN 10
                                    ELSE 5
                                    END AS monetary_score
-                        FROM (SELECT br.customer_id,
-                                     SUM(br.amount)                                                   AS total_rentals,
-                                     ROUND(percent_rank() OVER (ORDER BY sum(br.amount))::numeric, 2) AS spent_rank
-                              FROM base_rental br
-                              GROUP BY br.customer_id) t3),
+                        FROM (SELECT customer_id,
+                                     NTILE(10) OVER (ORDER BY SUM(amount) DESC) AS ntile_10
+                              FROM base_rental
+                              GROUP BY customer_id) t),
+
 --This cte is a pre-processing cte (To assign primary film category to the films)
 -- To handle edge case when film belongs to two or more categories
      film_primary_cat AS (SELECT fc.film_id, MAX(fc.category_id) AS film_primary_category
@@ -145,23 +146,71 @@ WITH base_rental AS (SELECT r.customer_id, r.rental_id, r.inventory_id, r.rental
                                    JOIN inventory i ON br.inventory_id = i.inventory_id
                                    JOIN film_category fc ON i.film_id = fc.film_id
                           GROUP BY fc.film_id),
-     category_loyalty AS (SELECT t6.customer_id,
-                                 SUM(t6.cat_rentals) AS top_two_cat_rentals
-                          FROM (SELECT t5.customer_id, t5.film_primary_category, t5.cat_rank, t5.cat_rentals
-                                FROM (SELECT t4.customer_id,
-                                             t4.film_primary_category,
-                                             COUNT(DISTINCT t4.rental_id) AS                                               cat_rentals,
-                                             row_number()
-                                             over (partition by t4.customer_id ORDER BY count(distinct t4.rental_id) DESC) cat_rank
-                                      FROM (SELECT br.customer_id,
-                                                   br.rental_id,
-                                                   br.inventory_id,
-                                                   fpc.film_primary_category
-                                            FROM base_rental br
-                                                     JOIN inventory i ON br.inventory_id = i.inventory_id
-                                                     JOIN film_primary_cat fpc ON i.film_id = fpc.film_id) t4
-                                      GROUP BY t4.customer_id, t4.film_primary_category) t5
-                                WHERE cat_rank <= 2) t6
-                          GROUP BY t6.customer_id)
-SELECT *
-from category_loyalty;
+     category_loyalty AS (SELECT t8.customer_id,
+                                 CASE
+                                     WHEN t8.top_cat_share >= 80 THEN 25
+                                     WHEN t8.top_cat_share >= 60 THEN 20
+                                     WHEN t8.top_cat_share >= 40 THEN 15
+                                     WHEN t8.top_cat_share >= 20 THEN 10
+                                     ELSE 5
+                                     END AS category_loyalty_score
+                          FROM (SELECT t7.customer_id,
+                                       t7.top_two_cat_rentals,
+                                       COUNT(DISTINCT br.rental_id),
+                                       ROUND((COALESCE(t7.top_two_cat_rentals, 0) /
+                                              NULLIF(COUNT(DISTINCT br.rental_id), 0)) * 100, 2) top_cat_share
+                                FROM (SELECT t6.customer_id, SUM(t6.cat_rentals) AS top_two_cat_rentals
+                                      FROM (SELECT t5.customer_id, t5.film_primary_category, t5.cat_rank, t5.cat_rentals
+                                            FROM (SELECT t4.customer_id,
+                                                         t4.film_primary_category,
+                                                         COUNT(DISTINCT t4.rental_id) AS                                               cat_rentals,
+                                                         row_number()
+                                                         over (partition by t4.customer_id ORDER BY count(distinct t4.rental_id) DESC) cat_rank
+                                                  FROM (SELECT br.customer_id,
+                                                               br.rental_id,
+                                                               br.inventory_id,
+                                                               fpc.film_primary_category
+                                                        FROM base_rental br
+                                                                 JOIN inventory i ON br.inventory_id = i.inventory_id
+                                                                 JOIN film_primary_cat fpc ON i.film_id = fpc.film_id) t4
+                                                  GROUP BY t4.customer_id, t4.film_primary_category) t5
+                                            WHERE cat_rank <= 2) t6
+                                      GROUP BY t6.customer_id) t7
+                                         JOIN base_rental br ON t7.customer_id = br.customer_id
+                                GROUP BY t7.customer_id, t7.top_two_cat_rentals) t8),
+     --Metric #2 starts here
+     --Flagging customers based on their holiday rentals
+     seasonal_pattern_score AS (SELECT t9.customer_id,
+                                       CASE
+                                           WHEN t9.november_flag IS TRUE AND t9.december_flag IS TRUE
+                                               THEN 50
+                                           WHEN t9.november_flag IS TRUE OR t9.december_flag IS TRUE
+                                               THEN 30
+                                           ELSE 10
+                                           END AS seasonal_rental_score
+                                FROM (SELECT br.customer_id,
+                                             BOOL_OR(EXTRACT(MONTH FROM br.rental_date::date) = 11) AS november_flag,
+                                             BOOL_OR(extract(MONTH FROM br.rental_date::date) = 12) AS december_flag
+                                      FROM base_rental br
+                                      GROUP BY br.customer_id) t9),
+    --This CTE calculates Average days between rentals per customer and assigns score.
+    rental_gap_score AS (
+                        SELECT t11.customer_id,
+                        CASE WHEN t11.average_diff_between_rentals < 30 THEN 50
+                             WHEN t11.average_diff_between_rentals BETWEEN 30 AND 60 THEN 30
+                             WHEN t11.average_diff_between_rentals BETWEEN 60 AND 90 THEN 20
+                             ELSE 10
+                             END AS rental_gap_score
+                         FROM (SELECT t10.customer_id, ROUND(AVG(t10.rental_date_diff), 2) AS average_diff_between_rentals
+                             FROM (SELECT br.customer_id, CASE
+                             WHEN LAG(br.rental_date)
+                             OVER (partition by br.customer_id ORDER BY br.rental_date) IS NULL
+                             THEN 0
+                             ELSE br.rental_date -
+                             LAG(br.rental_date)
+                             OVER (partition by br.customer_id ORDER BY br.rental_date)
+                             END as rental_date_diff
+                             FROM base_rental br) t10
+                             GROUP BY t10.customer_id
+                             ) t11)
+SELECT * from rental_gap_score;
