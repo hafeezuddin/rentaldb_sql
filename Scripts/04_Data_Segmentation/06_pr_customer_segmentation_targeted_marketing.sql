@@ -96,6 +96,14 @@ WITH base_rental AS (SELECT r.customer_id, r.rental_id, r.inventory_id, r.rental
                      WHERE r.rental_date BETWEEN '2005-01-01' AND '2005-12-31'
 --Rentals filtered to 2005 financial year.
 ),
+--Aggregated metrics
+    agg_metrics AS (
+        SELECT br.customer_id, MAX(br.rental_date) AS  last_rental_date,
+               SUM(br.amount) AS total_2005_spent,
+               count(DISTINCT br.rental_id) AS total_rentals
+        FROM base_rental br
+        GROUP BY br.customer_id
+    ),
 --CTE To assign recency score to based on rentals
      recency_score AS (SELECT t1.customer_id,
                               CASE
@@ -146,38 +154,39 @@ WITH base_rental AS (SELECT r.customer_id, r.rental_id, r.inventory_id, r.rental
                                    JOIN inventory i ON br.inventory_id = i.inventory_id
                                    JOIN film_category fc ON i.film_id = fc.film_id
                           GROUP BY fc.film_id),
-     category_loyalty AS (SELECT t8.customer_id,
-                                 CASE
-                                     WHEN t8.top_cat_share >= 80 THEN 25
-                                     WHEN t8.top_cat_share >= 60 THEN 20
-                                     WHEN t8.top_cat_share >= 40 THEN 15
-                                     WHEN t8.top_cat_share >= 20 THEN 10
-                                     ELSE 5
-                                     END AS category_loyalty_score
-                          FROM (SELECT t7.customer_id,
-                                       t7.top_two_cat_rentals,
-                                       COUNT(DISTINCT br.rental_id),
-                                       ROUND((COALESCE(t7.top_two_cat_rentals, 0) /
-                                              NULLIF(COUNT(DISTINCT br.rental_id), 0)) * 100, 2) top_cat_share
-                                FROM (SELECT t6.customer_id, SUM(t6.cat_rentals) AS top_two_cat_rentals
-                                      FROM (SELECT t5.customer_id, t5.film_primary_category, t5.cat_rank, t5.cat_rentals
-                                            FROM (SELECT t4.customer_id,
-                                                         t4.film_primary_category,
-                                                         COUNT(DISTINCT t4.rental_id) AS                                               cat_rentals,
-                                                         row_number()
-                                                         over (partition by t4.customer_id ORDER BY count(distinct t4.rental_id) DESC) cat_rank
-                                                  FROM (SELECT br.customer_id,
-                                                               br.rental_id,
-                                                               br.inventory_id,
-                                                               fpc.film_primary_category
-                                                        FROM base_rental br
-                                                                 JOIN inventory i ON br.inventory_id = i.inventory_id
-                                                                 JOIN film_primary_cat fpc ON i.film_id = fpc.film_id) t4
-                                                  GROUP BY t4.customer_id, t4.film_primary_category) t5
-                                            WHERE cat_rank <= 2) t6
-                                      GROUP BY t6.customer_id) t7
-                                         JOIN base_rental br ON t7.customer_id = br.customer_id
-                                GROUP BY t7.customer_id, t7.top_two_cat_rentals) t8),
+
+--     category_loyalty AS (SELECT t8.customer_id,
+--                                  CASE
+--                                      WHEN t8.top_cat_share >= 80 THEN 25
+--                                      WHEN t8.top_cat_share >= 60 THEN 20
+--                                      WHEN t8.top_cat_share >= 40 THEN 15
+--                                      WHEN t8.top_cat_share >= 20 THEN 10
+--                                      ELSE 5
+--                                      END AS category_loyalty_score
+--                           FROM (SELECT t7.customer_id,
+--                                        t7.top_two_cat_rentals,
+--                                        COUNT(DISTINCT br.rental_id),
+--                                        ROUND((COALESCE(t7.top_two_cat_rentals, 0) /
+--                                               NULLIF(COUNT(DISTINCT br.rental_id), 0)) * 100, 2) top_cat_share
+--                                 FROM (SELECT t6.customer_id, SUM(t6.cat_rentals) AS top_two_cat_rentals
+--                                       FROM (SELECT t5.customer_id, t5.film_primary_category, t5.cat_rank, t5.cat_rentals
+--                                             FROM (SELECT t4.customer_id,
+--                                                          t4.film_primary_category,
+--                                                          COUNT(DISTINCT t4.rental_id) AS                                               cat_rentals,
+--                                                          row_number()
+--                                                          over (partition by t4.customer_id ORDER BY count(distinct t4.rental_id) DESC) cat_rank
+--                                                   FROM (SELECT br.customer_id,
+--                                                                br.rental_id,
+--                                                                br.inventory_id,
+--                                                                fpc.film_primary_category
+--                                                         FROM base_rental br
+--                                                                  JOIN inventory i ON br.inventory_id = i.inventory_id
+--                                                                  JOIN film_primary_cat fpc ON i.film_id = fpc.film_id) t4
+--                                                   GROUP BY t4.customer_id, t4.film_primary_category) t5
+--                                             WHERE cat_rank <= 2) t6
+--                                       GROUP BY t6.customer_id) t7
+--                                          JOIN base_rental br ON t7.customer_id = br.customer_id
+--                                 GROUP BY t7.customer_id, t7.top_two_cat_rentals) t8),
      --Metric #2 starts here
      --Flagging customers based on their holiday rentals
      seasonal_pattern_score AS (SELECT t9.customer_id,
@@ -212,5 +221,59 @@ WITH base_rental AS (SELECT r.customer_id, r.rental_id, r.inventory_id, r.rental
                              END as rental_date_diff
                              FROM base_rental br) t10
                              GROUP BY t10.customer_id
-                             ) t11)
-SELECT * from rental_gap_score;
+                             ) t11),
+    score_agg AS (
+        SELECT rs.customer_id,
+               rs.recency_score + ms.monetary_score + fs.frequency_score + category_loyalty_score AS health_score,
+               sps.seasonal_rental_score + rgs.rental_gap_score AS probability_score,
+               rs.recency_score + ms.monetary_score + fs.frequency_score + category_loyalty_score + sps.seasonal_rental_score + rgs.rental_gap_score AS composite_score
+        FROM recency_score rs
+        JOIN frequency_score fs ON rs.customer_id = fs.customer_id
+        JOIN monetary_score ms ON fs.customer_id = ms.customer_id
+        JOIN category_loyalty cl ON ms.customer_id = cl.customer_id
+        JOIN seasonal_pattern_score sps ON cl.customer_id = sps.customer_id
+        JOIN rental_gap_score rgs ON sps.customer_id = rgs.customer_id
+
+    ),
+    segmentation AS (SELECT sagg.customer_id,
+                            sagg.health_score,
+                            sagg.probability_score,
+                            sagg.composite_score,
+                            CASE
+                                WHEN sagg.health_score >= 80 AND sagg.probability_score >= 80
+                                    THEN 'CHAMPIONS'
+                                WHEN sagg.health_score >= 70 AND sagg.probability_score < 60
+                                    THEN 'AT-RISK LOYALISTS'
+                                WHEN (sagg.health_score BETWEEN 60 AND 70) AND (sagg.probability_score < 60)
+                                    THEN 'RISING STARS'
+                                WHEN sagg.health_score < 60 AND sagg.probability_score >= 50
+                                    THEN 'CASUAL VIEWERS'
+                                ELSE 'Inactive'
+                                END AS segmentation
+                     FROM score_agg sagg),
+    assigning_offer_cte AS (
+        SELECT segg.customer_id,
+        CASE WHEN segg.segmentation = 'CHAMPIONS' THEN 'Exclusive loyalty rewards (early access to new releases)'
+             WHEN segg.segmentation = 'AT-RISK LOYALISTS' THEN 'We Miss You" 25% discount'
+             WHEN segg.segmentation = 'RISING STARS' THEN 'New release promotions + free rental'
+             WHEN segg.segmentation = 'CASUAL VIEWERS' THEN 'Budget bundle packages'
+             WHEN segg.segmentation = 'Inactive' THEN 'Win-back trial offer'
+        END AS segment_offer,
+        CASE WHEN segg.segmentation = 'CHAMPIONS' THEN 15
+             WHEN segg.segmentation = 'AT-RISK LOYALISTS' THEN 12
+             WHEN segg.segmentation = 'RISING STARS' THEN 10
+             WHEN segg.segmentation = 'CASUAL VIEWERS' THEN 7
+             WHEN segg.segmentation = 'Inactive' THEN 5
+        END AS max_bid_price_in_dollars
+
+        FROM segmentation segg
+    )
+SELECT aoc.customer_id, c.first_name, c.last_name, c.email, am.last_rental_date, am.total_rentals,am.total_2005_spent,
+       sa.health_score, sa.probability_score, sa.composite_score,
+       aoc.segment_offer AS recommended_offer,  sg.segmentation,  aoc.max_bid_price_in_dollars
+
+FROM assigning_offer_cte aoc
+JOIN customer c  ON aoc.customer_id = c.customer_id
+JOIN agg_metrics am ON c.customer_id = am.customer_id
+JOIN score_agg sa ON am.customer_id = sa.customer_id
+JOIN segmentation sg ON sa.customer_id = sg.customer_id;
