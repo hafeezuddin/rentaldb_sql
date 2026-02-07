@@ -85,7 +85,7 @@ Business Rules:
     Sort customers by composite_score DESC (Health × Probability)
     Include only customers with at least one 2005 rental
     All calculations based on 2005 data only.
-    Fixed buget of 50000 */
+    Fixed budget of 50000 */
 
 --CTE to calculate Metric #1: recency_score
 WITH recency_score AS (
@@ -424,3 +424,24 @@ FROM (
     FROM aggregation_cte ac
 )
 WHERE cm_budget <= 50000;
+
+-- [
+--   {
+--     "QUERY PLAN": "Planning Time: 24.249 ms"
+--   },
+--   {
+--     "QUERY PLAN": "JIT:"
+--   },
+--   {
+--     "QUERY PLAN": "  Functions: 392"
+--   },
+--   {
+--     "QUERY PLAN": "  Options: Inlining true, Optimization true, Expressions true, Deforming true"
+--   },
+--   {
+--     "QUERY PLAN": "  Timing: Generation 35.582 ms (Deform 11.765 ms), Inlining 90.561 ms, Optimization 2852.919 ms, Emission 2295.715 ms, Total 5274.777 ms"
+--   },
+--   {
+--     "QUERY PLAN": "Execution Time: 5929.672 ms"
+--   }
+-- ]
