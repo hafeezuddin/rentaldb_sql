@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/../rentaldb_etl/bronze_layer/csv_bronze_data_injest.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/../rentaldb_etl/bronze_layer/csv_bronze_ddl_databricks_optional.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/../rentaldb_etl/bronze_layer/csv_bronze_layer_ddl.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/01_Basic_Data_Exploration/01_pr_basic_Data_Exp.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/02_Dimensions_Exploration/02_pr_dimensions_exp.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/01_pr_top_five_customers.sql" dialect="PostgreSQL" />
@@ -31,6 +28,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/04_pr_customers_renting_premium_films.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/05_pr_customer_rental_behavior_analysis.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/06_pr_customer_segmentation_targeted_marketing_o.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/07_pr_customer_segmentation.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Customer Engagement &amp; Store Performance Analysis.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Inventory_optimization.SQL" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/customer_segmentation.sql" dialect="PostgreSQL" />
