@@ -108,12 +108,12 @@ WITH base_rental AS (SELECT r.customer_id,
                  FROM (SELECT cc.categorization,
                               cc.name,
                               row_number()
-                              over (PARTITION BY cc.categorization order by SUM(cc.total_rentals) DESC, cc.name asc) categorization_rank
-                       --Handles edge case where SUM(cc.total_rentals) ensures the category is truly the most rented, not just the one with the most customers
+                              over (PARTITION BY cc.categorization order by COUNT(*) DESC, cc.name asc) categorization_rank
                        FROM customer_categorization cc
                        GROUP BY cc.categorization, cc.name) t2
                  WHERE t2.categorization_rank = 1)
 --Main query and category level aggregated metrics
+
 SELECT cc.categorization                                                          customer_segment,
        cf.name                                                                    fav_category,
        COUNT(cc.customer_id) AS                                                   customer_count,
