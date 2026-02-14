@@ -30,7 +30,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/06_pr_customer_segmentation_targeted_marketing_o.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/07_pr_customer_segmentation.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/08_pr_customer_engagement_and_store_performance.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/Inventory_optimization.SQL" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/09_pr_inventory_optimization.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/avg_rental_duration_per_film.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/busiest_hours.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/category_popularity_by_period.sql" dialect="PostgreSQL" />
