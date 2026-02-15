@@ -22,9 +22,9 @@ WITH param_cte AS (SELECT DATE '2005-01-01' AS analysis_period_start,
                                JOIN inventory i ON r.inventory_id = i.inventory_id
                                JOIN film f ON i.film_id = f.film_id
                                CROSS JOIN param_cte pc
-                      WHERE (r.rental_date >= pc.analysis_period_start
-                          AND r.rental_date <= pc.analysis_period_end)
-                        AND (r.return_date IS NULL))
+                      WHERE (r.rental_date >= pc.analysis_period_start AND r.rental_date <= pc.analysis_period_end)
+                        AND (r.return_date IS NULL)
+                      )
 --Main query to extrapolate customer details against the film they haven't returned and the days since it was rented out.
 --List is ordered by customers having highest unreturned duration
 SELECT ri.customer_id,
@@ -34,4 +34,3 @@ SELECT ri.customer_id,
        ri.days_since_last_rented AS days_since_last_rental
 FROM rentals_info ri
 ORDER BY days_since_last_rental DESC;
-
