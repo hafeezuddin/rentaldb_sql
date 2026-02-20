@@ -12,7 +12,7 @@ ORDER BY f.film_id;
 SELECT f.film_id, f.title
 FROM film f
 LEFT JOIN inventory i ON f.film_id = i.film_id
-WHERE i.inventory_id IS NULL
+WHERE i.inventory_id IS NULL;
 
 /* Total count of films with no inventory stock record */
 SELECT COUNT(*) films_count_with_zero_inventory
