@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/Scripts/00_views/customer_rental_overview.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/01_Basic_Data_Exploration/01_pr_basic_Data_Exp.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/02_Dimensions_Exploration/02_pr_dimensions_exp.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/01_pr_top_five_customers.sql" dialect="PostgreSQL" />
