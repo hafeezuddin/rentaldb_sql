@@ -8,10 +8,12 @@ base_cte AS (SELECT DISTINCT r.customer_id,
                              TO_CHAR(DATE_TRUNC('MONTH', r.rental_date), 'YYYY-MM') AS ym
                   FROM rental r
                            JOIN payment p
-                                ON r.rental_id = p.rental_id --To consider paid rentals/rentals where revenue was generated
+                                ON r.rental_id = p.rental_id
+                               --To consider paid rentals/rentals where revenue was generated
                            CROSS JOIN param_cte pc
                   WHERE r.rental_date >= pc.analysis_start_date
                     AND r.rental_date <= pc.analysis_end_date)
+
 --Main query to filter customers who rented at least one film each month in 2005
 SELECT bc.customer_id
 FROM base_cte bc
