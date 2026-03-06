@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/Scripts/00_views/customer_rental_overview.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/03_Ranking_Analysis/01_pr_top_five_customers.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/06_pr_customer_segmentation_targeted_marketing_o.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/04_Data_Segmentation/07_pr_customer_segmentation.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
@@ -15,6 +14,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/06_pr_busiest_hours.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/07_pr_cummulative_stats.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/01_films_not_in_inventory.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/02_pr_high_revenue_low_rental_frequency.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/07_pr_unreturned_film_customers.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
   </component>
 </project>
