@@ -1,5 +1,6 @@
 /*Find the top 3 most-rented films in each category.
-For each film, show: Category name,Film title, Number of times it was rented, Its rank within the category */
+For each film, show: Category name,Film title, Number of times it was rented,
+  Its rank within the category */
 WITH films_data AS (
     SELECT f.film_id, f.title, c.name, COUNT(f.film_id) AS times_rented, SUM(f.rental_rate), f.release_year,
     ROW_NUMBER() OVER (PARTITION BY c.name ORDER BY COUNT(f.film_id) DESC, SUM(f.rental_rate) DESC, f.title ASC) AS ranks
