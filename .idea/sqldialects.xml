@@ -52,9 +52,9 @@
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/05_pr_store_information.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/06_pr_most_rented_films_in_each_category.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/07_pr_never_rented_films_high_revenue.sql" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/08_pr_underpriced_films.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/Inventory_efficiency.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/overlooked_films.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/stats_inventory_across_stores.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/top_rented_films_in_each_category.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/underpriced_films.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/01_pr_active_customers.sql" dialect="PostgreSQL" />
