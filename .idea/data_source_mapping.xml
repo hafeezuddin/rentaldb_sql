@@ -13,6 +13,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/05_pr_category_popularity.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/06_pr_busiest_hours.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/05_Cummulative_Analysis/07_pr_cummulative_stats.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
+    <file url="file://$PROJECT_DIR$/Scripts/07_Performance_Analysis/02_pr_fastest_growing_categories_MoM.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/01_films_not_in_inventory.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/02_pr_high_revenue_low_rental_frequency.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/03_pr_inventory_stats.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
@@ -22,7 +23,6 @@
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/07_pr_never_rented_films_high_revenue.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/08_pr_underpriced_films.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/High_revenue_low_availability.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
-    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/underpriced_films.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/07_pr_unreturned_film_customers.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
   </component>
 </project>
