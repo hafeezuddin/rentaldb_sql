@@ -29,7 +29,7 @@ metrics_calculation AS (
     SELECT rc.name, rc.rental_month,
            COUNT(rc.name) rentals,
            SUM(rc.amount) cat_revenue,
-           LAG(SUM(rc.amount)) OVER (PARTITION BY rc.name ORDER BY rental_month ASC) pmr
+           LAG(SUM(rc.amount)) OVER (PARTITION BY rc.name ORDER BY rental_month) pmr
     FROM rental_case rc
     GROUP BY rc.name, rc.rental_month
 ),
