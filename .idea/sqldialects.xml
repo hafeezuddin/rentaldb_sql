@@ -55,7 +55,6 @@
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/08_pr_underpriced_films.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/09_pr_top_rented_films_in_each_category.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/10_pr_films_hardest_to_keep_in_stock.sql" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/Films_hardest_to_keep_instock_across_stores.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/High_revenue_low_availability.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/Inventory_efficiency.sql" dialect="PostgreSQL" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/overlooked_films.sql" dialect="PostgreSQL" />
