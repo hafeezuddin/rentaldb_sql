@@ -26,6 +26,7 @@
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/10_pr_films_hardest_to_keep_in_stock.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/11_pr_high_revenue_low_availability_films.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/12_pr_overlooked_films.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
+    <file url="file://$PROJECT_DIR$/Scripts/08_Inventory_Analysis/13_pr_inventory_efficiency.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
     <file url="file://$PROJECT_DIR$/Scripts/09_Customer_Insights/07_pr_unreturned_film_customers.sql" value="8004f9e3-4924-42da-bc59-5e74ffdc973f" />
   </component>
 </project>
