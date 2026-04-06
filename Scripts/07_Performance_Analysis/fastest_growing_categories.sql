@@ -52,6 +52,5 @@ FROM per_change_cal pcl
 )
 SELECT * FROM ranking_months rm
 WHERE rm.percentage_change !=0 AND rm.ranking=1;
-
-
- 
+-- Planning Time: 1.161 ms
+-- Execution Time: 43.297 ms
