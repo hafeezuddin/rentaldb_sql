@@ -7,7 +7,7 @@ WITH expensive_film AS (
 )
 SELECT c.customer_id, CONCAT(c.first_name,' ', c.last_name) AS full_name,
        c.email,
-       COUNT(*) AS no_of_times_rented
+       COUNT(ef.film_id) AS no_of_times_rented
 FROM customer c
 JOIN rental r ON c.customer_id = r.customer_id
 JOIN inventory i ON r.inventory_id = i.inventory_id
