@@ -241,7 +241,29 @@ SELECT ma.film_id,
            WHEN ma.category = 'Tier_3' THEN 'Add 2 copies ahead of peak season'
            WHEN ma.category = 'Tier_4' THEN 'Reduce to 1 copy, do not reorder'
            WHEN ma.category = 'Tier_5' THEN 'Remove excess copies, retain 1 minimum'
-           END AS                          action
+           END AS                          action,
+       -- financial impact
+       CASE
+           WHEN ma.category = 'Tier_3'              THEN 2
+           WHEN ma.category IN ('Tier_4', 'Tier_5') THEN -(ma.total_inventory - 1)
+           ELSE                                           0
+           END                                      AS recommended_copy_change,
+       ma.total_inventory +
+       CASE
+           WHEN ma.category = 'Tier_3'              THEN 2
+           WHEN ma.category IN ('Tier_4', 'Tier_5') THEN -(ma.total_inventory - 1)
+           ELSE                                           0
+           END                                      AS recommended_copy_count,
+       CASE
+           WHEN ma.category IN ('Tier_4', 'Tier_5')
+               THEN ROUND(GREATEST(ma.total_inventory - 1, 0) * ma.replacementcost, 2)
+           ELSE 0
+           END                                      AS cost_savings,
+       CASE
+           WHEN ma.category IN ('Tier_4', 'Tier_5')
+               THEN ROUND(GREATEST(ma.total_inventory - 1, 0) * ma.revenue_per_copy, 2)
+           ELSE 0
+           END                                      AS revenue_at_risk
 FROM film_tiers ma
 ORDER BY ma.film_id;
 
