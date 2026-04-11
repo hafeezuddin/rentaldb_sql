@@ -1,298 +1,142 @@
-/* The Operations team needs to reduce inventory costs while maintaining customer satisfaction. 
- They want data-driven recommendations on which films to keep, which to acquire more copies of, and which to phase out.
- 
- Business Questions:
- "Which films give us the best return on our inventory investment?"
- "Are we over-invested in some films and under-invested in others?"
- "When do we need more copies available to meet demand?"
- "What's the optimal inventory mix for maximum profitability?"
- 
- Analytical Framework:
- 
- Metric 1: Film Profitability Score
- Calculate return on inventory investment for each film.
- Components:
- Revenue per Copy = Total film revenue / Number of copies
- Cost Recovery Multiple = Total revenue / Total replacement cost
- Rental Efficiency = Rentals per copy per month
- 
- Metric 2: Demand Patterns & Seasonality
- Identify when and how films are rented.
- Components:
- Monthly Rental Patterns - Peak demand periods
- Rental Duration Analysis - How long films stay out
- Copy Utilization Rate - How intensely each copy is used
- 
- Film Tiering System:
- Tier 1: "Workhorses" - High utilization, high ROI
- Tier 2: "Sleepers" - Low utilization but profitable when rented
- Tier 3: "Opportunities" - High demand, need more copies
- Tier 4: "Cost Centers" - Expensive but rarely rented
- Tier 5: "Underperformers" - Low cost but also low usage
- 
- Tier Classification Framework
- 
- Tier 1: "Workhorses" - High Utilization, High ROI
- Criteria:
- Revenue per copy > 75th percentile
- Cost recovery multiple > 3.0
- Average monthly rentals per copy > 2
- Action: Maintain current copies, monitor for wear
- 
- Tier 2: "Sleepers" - Low Utilization but Profitable
- Criteria:
- Revenue per copy > 60th percentile
- Cost recovery multiple > 2.0
- Average monthly rentals per copy < 1.5
- Action: Keep but don't expand, potential for promotion
- 
- Tier 3: "Opportunities" - High Demand, Need More Copies
- Criteria:
- Peak month concentration > 30% (high seasonal demand)
- Revenue per copy > 50th percentile
- Current copies < 3 (undersupplied)
- Action: Increase copy count by 1-2 copies
- 
- Tier 4: "Cost Centers" - Expensive but Rarely Rented
- Criteria:
- Replacement cost > 75th percentile
- Cost recovery multiple < 1.5
- Average monthly rentals per copy < 1
- Action: Phase out, reduce to 1 copy
- 
- Tier 5: "Underperformers" - Low Cost, Low Usage
- Criteria:
- Revenue per copy < 25th percentile
- Cost recovery multiple < 1.0
- Average monthly rentals per copy < 0.5
- Action: Remove excess copies, keep minimum only
- 
- Required Deliverables:
- Film-tier recommendations with specific copy count changes
- Expected financial impact of optimization
- */
---CTE to retrieve core metrics for each film (#Integrated)
-WITH film_data AS (
-    SELECT f.film_id, f.replacement_cost, f.title,
-        COUNT(i.inventory_id) AS no_of_copies_avilable,
-        SUM(p.amount) as total_revenue_generated,
-        ROUND(SUM(p.amount) / COUNT(i.inventory_id), 2) AS revenue_per_copy,
-        ROUND(SUM(p.amount) / f.replacement_cost, 2) AS cost_recovery_multiple
+/*
+================================================================================
+PROBLEM STATEMENT: DVD Rental Inventory Optimization
+DATABASE: Sakila (MySQL sample database)
+BUSINESS OWNER: Operations Team
+GOAL: Reduce inventory holding costs while maintaining rental availability
+================================================================================
+
+CONTEXT & SCOPE
+---------------
+- Data spans: May 2005 – August 2006 (Sakila dataset range)
+- "Active period" for monthly averages: 16 months (May 2005 – Aug 2006)
+- Revenue = SUM(payment.amount) traced via: payment → rental → inventory → film
+- Copies = COUNT(inventory_id) per film (total physical copies owned)
+- Available copies = copies not currently linked to an open rental
+  (rental.return_date IS NULL means copy is checked out)
+- Replacement cost = film.replacement_cost per film record
+
+================================================================================
+METRIC DEFINITIONS
+================================================================================
+
+Metric 1: Film Profitability Score
+-----------------------------------
+  revenue_per_copy        = SUM(payment.amount) / COUNT(DISTINCT inventory_id)
+  cost_recovery_multiple  = SUM(payment.amount) / SUM(film.replacement_cost per copy)
+                          = total_revenue / (copy_count * replacement_cost)
+  rentals_per_copy_month  = COUNT(rental_id) / copy_count / 16  -- 16-month window
+
+Metric 2: Demand & Seasonality
+--------------------------------
+  peak_month_pct    = MAX(rentals in any single month) / SUM(all rentals)
+                      -- signals seasonal concentration
+  avg_rental_days   = AVG(DATEDIFF(rental.return_date, rental.rental_date))
+                      -- films with long rental duration = fewer turnarounds
+
+
+================================================================================
+TIER CLASSIFICATION (mutually exclusive, priority order 1 → 5)
+================================================================================
+
+Tier 1 "Workhorses"   — Assign FIRST (highest priority)
+  revenue_per_copy    > p75 of all films
+  cost_recovery       > 3.0
+  rentals_per_copy_mo > 2.0
+  Action: Maintain copies, flag for wear-and-tear review
+
+Tier 3 "Opportunities" — Assign SECOND (catch high-demand before Tier 2)
+  peak_month_pct      > 0.30  (>30% of rentals in one month)
+  revenue_per_copy    > p50 of all films
+  copy_count          < 3
+  Action: Add 2 copies
+
+Tier 2 "Sleepers"     — Assign THIRD
+  revenue_per_copy    > p60 of all films
+  cost_recovery       > 2.0
+  rentals_per_copy_mo < 1.5
+  Action: Keep copies, flag for promotional pricing
+
+Tier 4 "Cost Centers" — Assign FOURTH
+  replacement_cost    > p75 of all films
+  cost_recovery       < 1.5
+  rentals_per_copy_mo < 1.0
+  Action: Reduce to 1 copy, do not reorder
+
+Tier 5 "Underperformers" — Assign LAST (catch-all for remaining poor performers)
+  revenue_per_copy    < p25 of all films
+  cost_recovery       < 1.0
+  rentals_per_copy_mo < 0.5
+  Action: Remove excess copies, keep 1 minimum
+
+================================================================================
+REQUIRED OUTPUT COLUMNS (one row per film)
+================================================================================
+
+  film_id
+  title
+  category
+  copy_count                  -- current inventory
+  total_revenue
+  revenue_per_copy
+  cost_recovery_multiple
+  rentals_per_copy_month
+  peak_month_pct
+  tier_number                 -- 1–5
+  tier_label                  -- "Workhorses", "Sleepers", etc.
+  recommended_copy_change     -- e.g. +2, 0, -3
+  recommended_copy_count      -- copy_count + recommended_copy_change
+  revenue_at_risk             -- revenue_per_copy * copies_removed (for reductions)
+  cost_savings                -- copies_removed * replacement_cost (for reductions)
+
+================================================================================
+CTE ARCHITECTURE (suggested build order)
+================================================================================
+
+  1. film_revenue      -- JOIN payment→rental→inventory→film, agg by film_id
+  2. film_inventory    -- COUNT(inventory_id) per film_id from inventory table
+  3. monthly_rentals   -- rentals per film per month (for peak_month_pct)
+  4. film_metrics      -- combine CTEs 1-3, compute all metric columns
+  5. percentiles       -- PERCENTILE_CONT or subquery to compute p25/p50/p60/p75
+  6. film_tiers        -- apply CASE WHEN logic in priority order using CASE...END
+  7. final_output      -- add recommendations + financial impact columns
+
+================================================================================
+*/
+
+--pre-processing to consolidate payments and rental information
+WITH payment_agg AS (
+    SELECT p.rental_id, SUM(p.amount) rental_amount
+    FROM payment p
+    GROUP BY p.rental_id
+),
+base_rental AS (
+    SELECT f.film_id, f.replacement_cost, r.rental_date, r.return_date, i.inventory_id, r.rental_id, pa.rental_amount
     FROM film f
-        INNER JOIN inventory i ON f.film_id = i.film_id
-        INNER JOIN rental r ON i.inventory_id = r.inventory_id
-        INNER JOIN payment p ON r.rental_id = p.rental_id
+    LEFT JOIN inventory i ON f.film_id = i.film_id
+    LEFT JOIN rental r ON i.inventory_id = r.inventory_id
+    LEFT JOIN payment_agg pa ON r.rental_id = pa.rental_id
     WHERE r.return_date IS NOT NULL
-        AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
-    GROUP BY 1,2,3
-    ORDER BY 1 ASC
 ),
---CTE to retrieve Monthly film rental patterns (#Integrated)
-rentals_monthly AS (
-    SELECT f.film_id, f.title,
-        EXTRACT('Month' FROM r.rental_date) AS month,
-        COUNT(*) AS rentals
-    FROM film f
-        INNER JOIN inventory i ON f.film_id = i.film_id
-        INNER JOIN rental r ON i.inventory_id = r.inventory_id
-        INNER JOIN payment p ON r.rental_id = p.rental_id
-    WHERE r.return_date IS NOT NULL
-        AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
-    GROUP BY 1,2,3
-    ORDER BY 1
+film_revenue AS (
+    SELECT br.film_id, COUNT(DISTINCT br.rental_id) total_rentals,
+           COUNT(DISTINCT br.inventory_id) total_inventory,
+           COALESCE(SUM(br.rental_amount),0) total_revenue,
+           COALESCE(SUM(br.rental_amount),0)/NULLIF(COUNT(DISTINCT br.inventory_id),0) revenue_per_copy,
+           SUM(br.rental_amount)/(NULLIF(MAX(br.replacement_cost),0) * (COUNT(distinct br.inventory_id))) cost_recovery_multiple,
+           COUNT(DISTINCT br.rental_id)::numeric/NULLIF(COUNT(DISTINCT br.inventory_id),0)/16 rentals__per_month
+    FROM base_rental br
+    GROUP BY br.film_id
 ),
---CTE to identify Peak Demand Periods (#Integrated)
-peak_period AS (
-    SELECT *
-    FROM (
-            SELECT sq3.film_id,
-                sq3.title,
-                sq3.month,
-                sq3.concentration,
-                ROW_NUMBER() OVER (
-                    PARTITION BY sq3.film_id
-                    ORDER BY sq3.concentration DESC
-                ) AS row_number
-            FROM (
-                    SELECT *,
-                        SUM(sq1.rentals) OVER (PARTITION BY sq1.film_id) AS total_rentals,
-                        ROUND(
-                            (
-                                sq1.rentals / SUM(sq1.rentals) OVER (PARTITION BY sq1.film_id)
-                            ) * 100,
-                            2
-                        ) AS concentration
-                    FROM (
-                            SELECT f.film_id,
-                                f.title,
-                                EXTRACT(
-                                    'Month'
-                                    FROM r.rental_date
-                                ) AS month,
-                                COUNT(*) AS rentals
-                            FROM film f
-                                INNER JOIN inventory i ON f.film_id = i.film_id
-                                INNER JOIN rental r ON i.inventory_id = r.inventory_id
-                                INNER JOIN payment p ON r.rental_id = p.rental_id
-                            WHERE r.return_date IS NOT NULL
-                                AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
-                            GROUP BY 1,
-                                2,
-                                3
-                            ORDER BY 1
-                        ) sq1
-                ) sq3
-        ) sq4
-    WHERE sq4.row_number = 1
-),
---CTE for Rental Duration Analysis. (#Integrated)
-rental_duration_analysis AS (
-    SELECT sq2.film_id,
-        ROUND(AVG(sq2.rental_duration), 2) AS average_rental_duration
-    FROM (
-            SELECT f.film_id,
-                i.inventory_id,
-                r.rental_id,
-                r.rental_date::date,
-                r.return_date::date,
-                (r.return_date::date - r.rental_date::date) AS rental_duration
-            FROM film f
-                INNER JOIN inventory i ON f.film_id = i.film_id
-                INNER JOIN rental r ON i.inventory_id = r.inventory_id
-                INNER JOIN payment p ON r.rental_id = p.rental_id
-            WHERE r.return_date IS NOT NULL
-                AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
-            ORDER BY f.film_id ASC
-        ) sq2
-    GROUP BY sq2.film_id
-),
---CTE for Copy utilization (#Integrated)
-copy_utilization AS (
-    SELECT sq5.film_id,
-        ROUND(AVG(sq5.rentals), 2) AS avg_monthly_rentals_per_copy
-    FROM (
-            SELECT f.film_id,
-                f.title,
-                i.inventory_id,
-                EXTRACT(
-                    'Month'
-                    FROM r.rental_date
-                ) AS month,
-                COUNT(*) AS rentals
-            FROM film f
-                INNER JOIN inventory i ON f.film_id = i.film_id
-                INNER JOIN rental r ON i.inventory_id = r.inventory_id
-                INNER JOIN payment p ON r.rental_id = p.rental_id
-            WHERE r.return_date IS NOT NULL
-                AND r.rental_date BETWEEN '01-01-2005' AND '12-31-2005'
-            GROUP BY 1,2,3,4
-            ORDER BY 1,3,4 ASC
-        ) sq5
-    GROUP BY 1
+--Metric #2
+demand_seasonality AS (
+    SELECT t1.film_id, MAX(t1.tot_monthly_rentals/t1.over_all_rentals)
+    FROM (SELECT br.film_id,
+                 COUNT(DISTINCT br.rental_id)                                     tot_monthly_rentals,
+                 TO_CHAR(br.rental_date, 'YYYY-MM'),
+                 SUM(COUNT(DISTINCT br.rental_id)) OVER (PARTITION BY br.film_id) over_all_rentals
+          FROM base_rental br
+          GROUP BY br.film_id, TO_CHAR(br.rental_date, 'YYYY-MM')) t1
+    GROUP BY t1.film_id
 )
-SELECT SUM(cost_savings) AS total_cost_savings,
-    SUM(revenue_potential) AS total_revenue_potential,
-    SUM(net_impact) AS total_net_impact,
-    -- Count films by action type
-    COUNT(
-        CASE
-            WHEN inventory_diff < 0 THEN 1
-        END
-    ) AS films_to_reduce,
-    COUNT(
-        CASE
-            WHEN inventory_diff > 0 THEN 1
-        END
-    ) AS films_to_expand,
-    COUNT(
-        CASE
-            WHEN inventory_diff = 0 THEN 1
-        END
-    ) AS films_unchanged
-    FROM (
-        SELECT *,
-            sq8.recommended_copies - sq8.no_of_copies_avilable AS inventory_diff,
-            -- For films with reduced copies (Tiers 4 & 5)
-            CASE
-                WHEN sq8.recommended_copies - sq8.no_of_copies_avilable < 0 THEN ABS(
-                    sq8.recommended_copies - sq8.no_of_copies_avilable
-                ) * replacement_cost
-                ELSE 0
-            END AS cost_savings,
-            -- For films with added copies (Tier 3)  
-            CASE
-                WHEN sq8.recommended_copies - sq8.no_of_copies_avilable > 0 THEN (
-                    sq8.recommended_copies - sq8.no_of_copies_avilable
-                ) * revenue_per_copy
-                ELSE 0
-            END AS revenue_potential,
-            -- Net financial impact
-            CASE
-                WHEN sq8.recommended_copies - sq8.no_of_copies_avilable < 0 THEN ABS(
-                    sq8.recommended_copies - sq8.no_of_copies_avilable
-                ) * replacement_cost
-                WHEN sq8.recommended_copies - sq8.no_of_copies_avilable > 0 THEN (
-                    sq8.recommended_copies - sq8.no_of_copies_avilable
-                ) * revenue_per_copy
-                ELSE 0
-            END AS net_impact
-        FROM (
-                SELECT *,
-                    CASE
-                        WHEN sq7.category = 'Work Horses - Maintain Copies'
-                        OR sq7.category = 'Sleepers - Keep but dont expand' THEN sq7.no_of_copies_avilable
-                        WHEN sq7.category = 'Opportunities -Increase by 1-2 copies' THEN sq7.no_of_copies_avilable + 1
-                        WHEN sq7.category = 'Cost Centers -  Phase out'
-                        OR sq7.category = 'Underperformers - Remove excess copies' THEN 1
-                        WHEN sq7.category = 'TBA' THEN sq7.no_of_copies_avilable
-                        ELSE 0
-                    END AS recommended_copies
-                FROM (
-                        SELECT *,
-                            CASE
-                                --Tier #1
-                                WHEN sq6.p_rank > 0.75
-                                AND sq6.cost_recovery_multiple > 3
-                                AND avg_monthly_rentals_per_copy > 2 THEN 'Work Horses - Maintain Copies' --Tier #2
-                                WHEN sq6.p_rank > 0.60
-                                AND sq6.cost_recovery_multiple > 2
-                                AND avg_monthly_rentals_per_copy < 1.5 THEN 'Sleepers - Keep but dont expand' --Tier #3
-                                WHEN sq6.concentration > 30
-                                AND sq6.p_rank > 0.50
-                                AND sq6.no_of_copies_avilable < 3 THEN 'Opportunities -Increase by 1-2 copies' --Tier #4
-                                WHEN sq6.rep_rank > 0.75
-                                AND sq6.cost_recovery_multiple < 1.5
-                                AND sq6.avg_monthly_rentals_per_copy < 1 THEN 'Cost Centers -  Phase out' --Tier #5
-                                WHEN sq6.rev_rank < 0.25
-                                AND sq6.cost_recovery_multiple < 1.0
-                                AND sq6.avg_monthly_rentals_per_copy < 0.5 THEN 'Underperformers - Remove excess copies'
-                                ELSE 'TBA'
-                            END AS category
-                        FROM (
-                                SELECT fd.film_id,
-                                    fd.title,
-                                    fd.no_of_copies_avilable,
-                                    fd.replacement_cost,
-                                    fd.revenue_per_copy,
-                                    fd.cost_recovery_multiple,
-                                    pd.month AS peak_month,
-                                    rda.average_rental_duration,
-                                    cu.avg_monthly_rentals_per_copy,
-                                    pd.concentration,
-                                    PERCENT_RANK() OVER (
-                                        ORDER BY fd.revenue_per_copy
-                                    ) AS p_rank,
-                                    PERCENT_RANK() OVER (
-                                        ORDER BY fd.replacement_cost
-                                    ) AS rep_rank,
-                                    PERCENT_RANK() OVER (
-                                        ORDER BY fd.revenue_per_copy
-                                    ) AS rev_rank
-                                FROM film_data fd
-                                    INNER JOIN peak_period pd ON fd.film_id = pd.film_id
-                                    INNER JOIN rental_duration_analysis rda ON fd.film_id = rda.film_id
-                                    INNER JOIN copy_utilization cu ON fd.film_id = cu.film_id
-                            ) sq6
-                    ) sq7
-            ) sq8
-    ) sq9;
+SELECT * FROM demand_seasonality;
