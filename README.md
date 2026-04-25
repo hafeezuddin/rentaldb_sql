@@ -7,7 +7,7 @@ recommendations, inventory analysis, and operational performance review.
 
 ## Project Goals
 
-- Practice analytical SQL on a realistic relational schema.
+- Analytical SQL on a realistic relational schema.
 - Answer common retail rental business questions with reusable query files.
 - Demonstrate CTEs, joins, aggregations, conditional logic, date handling, and
   window functions.
